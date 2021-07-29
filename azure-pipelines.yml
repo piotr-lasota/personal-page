@@ -4,13 +4,22 @@ trigger:
 pool:
   vmImage: ubuntu-latest
 
-steps:
-  - checkout: self
-    submodules: true
-  - task: AzureStaticWebApp@0
-    displayName: Deploy Static Web Application
-    inputs:
-      app_location: '/'
-      output_location: ''
-      skip_app_build: true
-      azure_static_web_apps_api_token: $(deployment_token)
+jobs:
+  - job: Welcome
+    steps:
+      - bash: echo "Welcome!"
+  - job: Test
+    steps:
+      - bash: echo "Will test!"
+  - job: Build
+    steps:
+      - bash: echo "Will deploy"
+      - checkout: self
+        submodules: true
+      # - task: AzureStaticWebApp@0
+      #   displayName: Deploy Static Web Application
+      #   inputs:
+      #     app_location: "/"
+      #     output_location: ""
+      #     skip_app_build: true
+      #     azure_static_web_apps_api_token: $(deployment_token)

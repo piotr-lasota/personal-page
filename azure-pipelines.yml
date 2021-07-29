@@ -27,6 +27,10 @@ steps:
     env:
       YARN_CACHE_FOLDER: ${{ variables.YARN_CACHE_FOLDER }}
 
+  - script: yarn lint
+    displayName: Check for linting errors
+    workingDirectory: ${{ variables.FRONTEND_FOLDER }}
+
   - script: yarn test
     displayName: Run tests
     workingDirectory: ${{ variables.FRONTEND_FOLDER }}

@@ -1,27 +1,13 @@
-/**
- * SEO component that queries for data with
- *  Gatsby's useStaticQuery React hook
- *
- * See: https://www.gatsbyjs.com/docs/use-static-query/
- */
-
-import * as React from "react"
-import { Helmet } from "react-helmet"
-import { graphql, useStaticQuery } from "gatsby"
+import * as React from 'react';
+import { Helmet } from 'react-helmet';
+import { graphql, useStaticQuery } from 'gatsby';
 
 type SeoProps = {
   description?: string;
   lang?: string;
-  meta?: Array<{name: string, content: string}>;
+  meta?: Array<{ name: string; content: string }>;
   title: string;
-}
-
-const defaultSeoProps: SeoProps = {
-  description: '',
-  lang: 'en',
-  meta: [],
-  title: ''
-}
+};
 
 const Seo = ({ description, lang, meta, title }: SeoProps): JSX.Element => {
   const { site } = useStaticQuery(
@@ -43,35 +29,35 @@ const Seo = ({ description, lang, meta, title }: SeoProps): JSX.Element => {
 
   const baseMeta = [
     {
-      name: `description`,
+      name: 'description',
       content: metaDescription
     },
     {
-      property: `og:title`,
+      property: 'og:title',
       content: title
     },
     {
-      property: `og:description`,
+      property: 'og:description',
       content: metaDescription
     },
     {
-      property: `og:type`,
-      content: `website`
+      property: 'og:type',
+      content: 'website'
     },
     {
-      name: `twitter:card`,
-      content: `summary`
+      name: 'twitter:card',
+      content: 'summary'
     },
     {
-      name: `twitter:creator`,
-      content: site.siteMetadata?.author || ``
+      name: 'twitter:creator',
+      content: site.siteMetadata?.author || ''
     },
     {
-      name: `twitter:title`,
+      name: 'twitter:title',
       content: title
     },
     {
-      name: `twitter:description`,
+      name: 'twitter:description',
       content: metaDescription
     }
   ];
@@ -90,6 +76,10 @@ const Seo = ({ description, lang, meta, title }: SeoProps): JSX.Element => {
   );
 };
 
-Seo.defaultProps = defaultSeoProps;
+Seo.defaultProps = {
+  description: '',
+  lang: 'en',
+  meta: []
+};
 
 export default Seo;

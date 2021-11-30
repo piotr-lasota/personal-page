@@ -4,7 +4,7 @@ import { Link } from 'gatsby';
 import Layout from '../components/layout';
 import Seo from '../components/seo';
 
-const UsingDSG = () => (
+const UsingDSG = (): JSX.Element => (
   <Layout>
     <Seo title="Using DSG" />
     <h1>Hello from a DSG Page</h1>

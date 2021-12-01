@@ -1,17 +1,15 @@
 // noinspection JSUnusedGlobalSymbols
 
 import React from 'react';
-
 import { Box, Typography } from '@mui/material';
-import Seo from '../components/Seo';
 
-const IndexPage = (): JSX.Element => (
+const Bio = (): JSX.Element => (
   <Box>
-    <Seo title="Home" />
     <Typography variant="h2" align="center">
-      Index page
+      Who am I?
     </Typography>
+    <Typography>Blah blah</Typography>
   </Box>
 );
 
-export default IndexPage;
+export default Bio;

@@ -2,15 +2,25 @@
 
 import * as React from 'react';
 
-import Layout from '../components/layout';
-import Seo from '../components/seo';
+import { Box, Typography } from '@mui/material';
+import Seo from '../components/Seo';
 
 const NotFoundPage: React.FC = () => (
-  <Layout>
+  <Box>
     <Seo title="404: Not found" />
-    <h1>404: Not Found</h1>
-    <p>You just hit a route that does not exist... the sadness.</p>
-  </Layout>
+    <Typography variant="h1" align="center">
+      404
+    </Typography>
+    <Typography
+      variant="h4"
+      align="center"
+      sx={{
+        mt: 2
+      }}
+    >
+      Well... that didn&apos;t work out
+    </Typography>
+  </Box>
 );
 
 export default NotFoundPage;

@@ -1,6 +1,6 @@
+import React from 'react';
 import { AppBar, Box, Container, Grid, Toolbar } from '@mui/material';
 import { Button } from 'gatsby-theme-material-ui';
-import React from 'react';
 import { graphql, useStaticQuery } from 'gatsby';
 
 type Page = {

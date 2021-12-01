@@ -1,7 +1,5 @@
 // noinspection JSUnusedGlobalSymbols
-
 import React from 'react';
-
 import { Box, Typography } from '@mui/material';
 import Seo from '../components/Seo';
 

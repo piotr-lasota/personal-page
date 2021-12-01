@@ -2,10 +2,14 @@ import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { graphql, useStaticQuery } from 'gatsby';
 
+type MetaItem =
+  | { name: string; content: string }
+  | { property: string; content: string };
+
 type SeoProps = {
   description?: string;
   lang?: string;
-  meta?: Array<{ name: string; content: string }>;
+  meta?: MetaItem[];
   title: string;
 };
 
@@ -27,7 +31,7 @@ const Seo = ({ description, lang, meta, title }: SeoProps): JSX.Element => {
   const metaDescription: string = description || site.siteMetadata.description;
   const defaultTitle: string = site.siteMetadata?.title;
 
-  const baseMeta = [
+  const baseMeta: MetaItem[] = [
     {
       name: 'description',
       content: metaDescription

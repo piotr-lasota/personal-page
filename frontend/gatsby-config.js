@@ -4,15 +4,15 @@ module.exports = {
     description:
       'Personal page with opinions of my own and not that of the company I work for',
     author: 'Piotr Lasota',
-    siteUrl: 'https://piotr-lasot.pl/',
+    siteUrl: 'https://piotr-lasota.pl/',
     pages: [
       {
         name: 'Home',
-        link: '/'
+        link: ''
       },
       {
         name: 'Bio',
-        link: '/bio'
+        link: 'bio'
       }
     ]
   },

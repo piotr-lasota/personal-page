@@ -42,7 +42,7 @@ const NavigationBar = (): JSX.Element => {
             <Grid container direction="row" spacing={4}>
               {pages.map((page) => (
                 <Grid item key={page.name}>
-                  <Button color="inherit" to={page.link}>
+                  <Button color="inherit" to={`/${page.link}`}>
                     {page.name}
                   </Button>
                 </Grid>

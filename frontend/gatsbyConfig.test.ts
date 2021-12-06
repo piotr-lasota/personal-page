@@ -2,17 +2,17 @@ import path from 'path';
 import * as fs from 'fs';
 import gatsbyConfig from './gatsby-config';
 
-const gatsbyPagesFolder = ['src', 'pages'];
+const gatsbyPagesFolderPath = ['src', 'pages'];
 
 const pathToPage = (page: string): string =>
   path.resolve(
     __dirname,
-    ...gatsbyPagesFolder,
+    ...gatsbyPagesFolderPath,
     `${page === '' ? 'index' : page}.tsx`
   );
 
 describe('Pages config', () => {
-  it('contains a matching page source file for every page specified in siteMetadata', async () => {
+  it('has all the pages specified covered by a matching source file', async () => {
     // Act
     const missingPageNames = gatsbyConfig.siteMetadata.pages
       .map((page) => ({

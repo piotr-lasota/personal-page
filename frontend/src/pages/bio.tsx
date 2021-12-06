@@ -1,13 +1,14 @@
 // noinspection JSUnusedGlobalSymbols
 import React from 'react';
 import { Box, Typography } from '@mui/material';
+import Seo from '../components/Seo';
 
 const Bio = (): JSX.Element => (
   <Box>
-    <Typography variant="h2" align="center">
+    <Seo title="Bio" />
+    <Typography variant="h2" align="center" color="primary">
       Who am I?
     </Typography>
-    <Typography>Blah blah</Typography>
   </Box>
 );
 

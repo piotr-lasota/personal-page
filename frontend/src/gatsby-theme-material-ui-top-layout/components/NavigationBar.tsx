@@ -1,5 +1,5 @@
 import React from 'react';
-import { AppBar, Box, Container, Grid, Toolbar } from '@mui/material';
+import { AppBar, Box, Container, Grid, Theme, Toolbar } from '@mui/material';
 import { Button } from 'gatsby-theme-material-ui';
 import { graphql, useStaticQuery } from 'gatsby';
 
@@ -7,6 +7,10 @@ type Page = {
   name: string;
   link: string;
 };
+
+const ToolbarSpacer = (): JSX.Element => (
+  <Box sx={(theme) => theme.mixins.toolbar} />
+);
 
 const NavigationBar = (): JSX.Element => {
   const {
@@ -31,7 +35,13 @@ const NavigationBar = (): JSX.Element => {
 
   return (
     <Box>
-      <AppBar position="fixed" color="transparent" sx={{ bgcolor: 'white' }}>
+      <AppBar
+        position="fixed"
+        color="transparent"
+        sx={{
+          backgroundColor: (theme: Theme) => theme.palette.background.default
+        }}
+      >
         <Container
           sx={{
             display: 'flex',
@@ -42,7 +52,12 @@ const NavigationBar = (): JSX.Element => {
             <Grid container direction="row" spacing={4}>
               {pages.map((page) => (
                 <Grid item key={page.name}>
-                  <Button color="inherit" to={`/${page.link}`}>
+                  <Button
+                    color="inherit"
+                    to={`/${page.link}`}
+                    role="button"
+                    aria-label="page.name"
+                  >
                     {page.name}
                   </Button>
                 </Grid>
@@ -51,7 +66,7 @@ const NavigationBar = (): JSX.Element => {
           </Toolbar>
         </Container>
       </AppBar>
-      <Box sx={(theme) => theme.mixins.toolbar} /> {/* toolbar offset */}
+      <ToolbarSpacer />
     </Box>
   );
 };

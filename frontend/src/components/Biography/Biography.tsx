@@ -5,8 +5,8 @@ import BiographyRow from './BiographyRow';
 import BiographyContentCell from './BiographyContentCell';
 
 const Biography = (): JSX.Element => (
-  <Grid container direction="column" spacing={10}>
-    <Grid item xs={12}>
+  <Grid component="section" container direction="column" spacing={10}>
+    <Grid component="header" item xs={12}>
       <Typography variant="h2" align="center" color="primary">
         Who am I?
       </Typography>

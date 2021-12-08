@@ -2,6 +2,9 @@ import { createTheme, responsiveFontSizes } from '@mui/material';
 
 const theme = responsiveFontSizes(
   createTheme({
+    typography: {
+      fontFamily: ['Ubuntu', 'sans-serif'].join(',')
+    },
     palette: {
       primary: {
         light: '#ffa06d',

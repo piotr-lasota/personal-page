@@ -12,16 +12,14 @@ type TopLayoutProps = {
 };
 
 // eslint-disable-next-line
-const TopLayout = ({ children, theme }: TopLayoutProps) : JSX.Element => {
-  return (
-    <ThemeTopLayout theme={theme}>
-      <Container maxWidth="md">
-        <NavigationBar />
-        <Box sx={{ mb: 2 }} />
-        {children}
-      </Container>
-    </ThemeTopLayout>
-  );
-};
+const TopLayout = ({ children, theme }: TopLayoutProps): JSX.Element => (
+  <ThemeTopLayout theme={theme}>
+    <Container maxWidth="md">
+      <NavigationBar />
+      <Box sx={{ mb: 2 }} />
+      {children}
+    </Container>
+  </ThemeTopLayout>
+);
 
 export default TopLayout;

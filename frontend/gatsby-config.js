@@ -47,6 +47,20 @@ module.exports = {
         icon: 'src/images/gatsby-icon.png'
       }
     },
-    'gatsby-theme-material-ui'
+    {
+      resolve: 'gatsby-theme-material-ui',
+      options: {
+        webFontsConfig: {
+          fonts: {
+            google: [
+              {
+                family: 'Ubuntu',
+                variants: ['300', '400', '500']
+              }
+            ]
+          }
+        }
+      }
+    }
   ]
 };

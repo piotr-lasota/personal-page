@@ -12,6 +12,7 @@ const BiographyRow = ({
 }: BiographyProps): JSX.Element => {
   return (
     <Grid
+      component="section"
       item
       xs={12}
       container

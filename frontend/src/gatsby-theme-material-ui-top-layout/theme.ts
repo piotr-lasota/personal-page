@@ -1,5 +1,4 @@
 import { createTheme, responsiveFontSizes } from '@mui/material';
-import { deepOrange, purple } from '@mui/material/colors';
 
 const theme = responsiveFontSizes(
   createTheme({

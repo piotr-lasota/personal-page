@@ -1,3 +1,8 @@
+// eslint-disable-next-line import/no-extraneous-dependencies,@typescript-eslint/no-var-requires
+require('dotenv').config({
+  path: `.env.${process.env.NODE_ENV}`
+});
+
 module.exports = {
   siteMetadata: {
     title: 'Piotr Lasota',
@@ -60,6 +65,13 @@ module.exports = {
             ]
           }
         }
+      }
+    },
+    {
+      resolve: 'gatsby-source-contentful',
+      options: {
+        spaceId: process.env.SPACE_ID,
+        accessToken: process.env.DELIVERY_API_KEY
       }
     }
   ]

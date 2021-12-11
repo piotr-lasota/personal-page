@@ -7,6 +7,7 @@ const gatsbyPagesFolderPath = ['src', 'pages'];
 const pathToPage = (page: string): string =>
   path.resolve(
     __dirname,
+    '..',
     ...gatsbyPagesFolderPath,
     `${page === '' ? 'index' : page}.tsx`
   );

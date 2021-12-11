@@ -1,6 +1,14 @@
-// eslint-disable-next-line import/no-extraneous-dependencies,@typescript-eslint/no-var-requires
-require('dotenv').config({
-  path: `.env.${process.env.NODE_ENV}`
+/* eslint-disable @typescript-eslint/no-var-requires,import/no-extraneous-dependencies */
+const path = require('path');
+const dotenv = require('dotenv');
+
+const envFilesPath = path.resolve(
+  __dirname,
+  '..',
+  `.env.${process.env.NODE_ENV}`
+);
+dotenv.config({
+  path: envFilesPath
 });
 
 module.exports = {
@@ -36,7 +44,7 @@ module.exports = {
       resolve: 'gatsby-source-filesystem',
       options: {
         name: 'images',
-        path: `${__dirname}/src/images`
+        path: path.resolve(__dirname, '..', 'src', 'images')
       }
     },
     'gatsby-transformer-sharp',

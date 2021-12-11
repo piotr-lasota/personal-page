@@ -2,7 +2,7 @@
 import React from 'react';
 
 import { Box, Typography } from '@mui/material';
-import Seo from '../components/Seo';
+import { Seo } from '../components';
 
 const NotFoundPage: React.FC = () => (
   <Box

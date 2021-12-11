@@ -1,8 +1,7 @@
 // noinspection JSUnusedGlobalSymbols
 import React from 'react';
 import { Box } from '@mui/material';
-import Seo from '../components/Seo';
-import Biography from '../components/Biography';
+import { Biography, Seo } from '../components';
 
 const Bio = (): JSX.Element => (
   <Box>

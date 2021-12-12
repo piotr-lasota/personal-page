@@ -26,6 +26,10 @@ module.exports = {
       {
         name: 'Bio',
         link: 'bio'
+      },
+      {
+        name: 'Blog',
+        link: 'blog'
       }
     ]
   },

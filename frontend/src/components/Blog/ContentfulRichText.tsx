@@ -3,9 +3,23 @@ import { renderRichText } from 'gatsby-source-contentful/rich-text';
 import { Options } from '@contentful/rich-text-react-renderer';
 import { BLOCKS } from '@contentful/rich-text-types';
 import { Typography } from '@mui/material';
+import ContentfulCodeSnippet from './ContentfulCodeSnippet';
 
 const options: Options = {
   renderNode: {
+    [BLOCKS.EMBEDDED_ENTRY]: ({ data }) => {
+      if (data.target.__typename === 'ContentfulCodeSnippet') {
+        return (
+          <>
+            <b>{data.target.caption}</b>
+            <ContentfulCodeSnippet>
+              {data.target.snippet.snippet}
+            </ContentfulCodeSnippet>
+          </>
+        );
+      }
+      return <div>entry</div>;
+    },
     [BLOCKS.HEADING_1]: (_, children) => (
       <Typography variant="h1" color="primary">
         {children}

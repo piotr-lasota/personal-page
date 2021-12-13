@@ -40,6 +40,16 @@ export const query = graphql`
       publishingDate
       content {
         raw
+        references {
+          ... on ContentfulCodeSnippet {
+            contentful_id
+            __typename
+            caption
+            snippet {
+              snippet
+            }
+          }
+        }
       }
     }
   }

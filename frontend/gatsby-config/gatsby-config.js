@@ -30,10 +30,6 @@ module.exports = {
       {
         name: 'Blog',
         link: 'blog'
-      },
-      {
-        name: 'Code',
-        link: 'code'
       }
     ]
   },

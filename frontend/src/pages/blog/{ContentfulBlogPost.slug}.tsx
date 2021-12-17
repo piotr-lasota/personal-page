@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { graphql } from 'gatsby';
-import { Box, Typography } from '@mui/material';
-import ContentfulRichText from '../../components/Blog/ContentfulRichText';
-import { Seo } from '../../components';
+import { Box } from '@mui/material';
+import { ContentfulBlogPost, Seo } from '../../components';
 
 type BlogPostProps = {
   data: {
@@ -17,15 +16,14 @@ type BlogPostProps = {
   };
 };
 const BlogPost = ({
-  data: { contentfulBlogPost }
+  data: {
+    contentfulBlogPost: { content, title }
+  }
 }: BlogPostProps): JSX.Element => {
   return (
     <Box>
-      <Seo title={contentfulBlogPost.title} />
-      <Typography variant="h3" align="center" color="primary">
-        {contentfulBlogPost.title}
-      </Typography>
-      <ContentfulRichText richText={contentfulBlogPost.content} />
+      <Seo title={title} />
+      <ContentfulBlogPost title={title} content={content} />
     </Box>
   );
 };
@@ -45,6 +43,7 @@ export const query = graphql`
             contentful_id
             __typename
             caption
+            language
             snippet {
               snippet
             }

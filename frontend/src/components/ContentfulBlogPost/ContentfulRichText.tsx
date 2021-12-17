@@ -1,8 +1,9 @@
+/* eslint-disable react/prop-types,no-underscore-dangle */
 import React from 'react';
 import { renderRichText } from 'gatsby-source-contentful/rich-text';
 import { Options } from '@contentful/rich-text-react-renderer';
 import { BLOCKS } from '@contentful/rich-text-types';
-import { Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import ContentfulCodeSnippet from './ContentfulCodeSnippet';
 
 const options: Options = {
@@ -10,12 +11,16 @@ const options: Options = {
     [BLOCKS.EMBEDDED_ENTRY]: ({ data }) => {
       if (data.target.__typename === 'ContentfulCodeSnippet') {
         return (
-          <>
-            <b>{data.target.caption}</b>
-            <ContentfulCodeSnippet>
-              {data.target.snippet.snippet}
-            </ContentfulCodeSnippet>
-          </>
+          <Box>
+            <Box sx={{ '& p': { fontFamily: 'Monospace', marginTop: 1 } }}>
+              <Typography fontSize={14}>{data.target.caption}</Typography>
+            </Box>
+            <Box sx={{ '& pre': { marginTop: 0 } }}>
+              <ContentfulCodeSnippet language={data.target.language}>
+                {data.target.snippet.snippet}
+              </ContentfulCodeSnippet>
+            </Box>
+          </Box>
         );
       }
       return <div>entry</div>;

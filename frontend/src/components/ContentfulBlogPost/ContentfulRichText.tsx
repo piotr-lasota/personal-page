@@ -26,17 +26,17 @@ const options: Options = {
       return <div>entry</div>;
     },
     [BLOCKS.HEADING_1]: (_, children) => (
-      <Typography variant="h1" color="primary">
+      <Typography variant="h4" color="primary">
         {children}
       </Typography>
     ),
     [BLOCKS.HEADING_2]: (_, children) => (
-      <Typography variant="h2" color="primary">
+      <Typography variant="h4" color="primary">
         {children}
       </Typography>
     ),
     [BLOCKS.HEADING_3]: (_, children) => (
-      <Typography variant="h3" color="primary">
+      <Typography variant="h4" color="primary">
         {children}
       </Typography>
     ),
@@ -58,7 +58,9 @@ const options: Options = {
     [BLOCKS.TABLE_HEADER_CELL]: (_, children) => (
       <Typography color="primary">{children}</Typography>
     ),
-    [BLOCKS.PARAGRAPH]: (_, children) => <Typography>{children}</Typography>
+    [BLOCKS.PARAGRAPH]: (_, children) => (
+      <Typography align="justify">{children}</Typography>
+    )
   }
 };
 
@@ -71,7 +73,9 @@ export type ContentfulRichTextProps = {
 const ContentfulRichText = ({
   richText
 }: ContentfulRichTextProps): JSX.Element => (
-  <>{renderRichText(richText, options)}</>
+  <Typography component="article">
+    {renderRichText(richText, options)}
+  </Typography>
 );
 
 export default ContentfulRichText;

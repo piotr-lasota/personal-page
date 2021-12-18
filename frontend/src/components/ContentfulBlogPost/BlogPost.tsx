@@ -13,7 +13,7 @@ type BlogPageProps = {
 const BlogPost = ({ title, content }: BlogPageProps): JSX.Element => {
   return (
     <Box>
-      <Typography variant="h3" align="center" color="primary">
+      <Typography variant="h3" align="center" color="primary" sx={{ mb: 5 }}>
         {title}
       </Typography>
       <ContentfulRichText richText={content} />

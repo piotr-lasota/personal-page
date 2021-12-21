@@ -10,12 +10,12 @@ namespace Api.Functions;
 
 public class GetBlogPostComments
 {
-    private readonly IBlogPostCommentRepository _repository;
+    private readonly IBlogPostRepository _blogPostRepository;
 
     public GetBlogPostComments(
-        IBlogPostCommentRepository repository)
+        IBlogPostRepository blogPostRepository)
     {
-        _repository = repository;
+        _blogPostRepository = blogPostRepository;
     }
 
     [Function(nameof(GetBlogPostComments))]
@@ -25,19 +25,23 @@ public class GetBlogPostComments
         FunctionContext executionContext,
         string slug)
     {
-        var logger = executionContext.GetLogger(nameof(GetBlogPostComments));
+        var logger = executionContext.GetLogger<GetBlogPostComments>();
 
-        logger.LogInformation("Requested comments for post {slug}", slug);
+        var post = await _blogPostRepository.GetBySlug(slug, CancellationToken.None);
 
-        var commentsList = await _repository.GetAllForPost(slug, CancellationToken.None);
-
-        if (commentsList is null)
+        if (post is null)
         {
+            logger.LogInformation("No post with slug {Slug} found", slug);
             return req.CreateResponse(HttpStatusCode.NotFound);
         }
 
+        logger.LogInformation(
+            "Returning {NumberOfComments} comments for post {Slug}",
+            post.Comments.Count,
+            post.Slug);
+
         var response = req.CreateResponse(HttpStatusCode.OK);
-        await response.WriteAsJsonAsync(commentsList);
+        await response.WriteAsJsonAsync(post.Comments);
         return response;
     }
 }

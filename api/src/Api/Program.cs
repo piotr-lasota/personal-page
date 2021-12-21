@@ -1,3 +1,4 @@
+using System.Text.Json;
 using DataAccess.Repositories;
 using Domain.Repositories;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,7 +15,9 @@ public static class Program
            .ConfigureServices(
                 services =>
                 {
-                    services.AddScoped<IBlogPostCommentRepository, BlogPostCommentRepository>();
+                    services.Configure<JsonSerializerOptions>(
+                        options => { options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase; });
+                    services.AddSingleton<IBlogPostRepository, FakeBlogPostRepository>();
                 })
            .Build();
 

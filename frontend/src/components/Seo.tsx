@@ -6,14 +6,18 @@ type MetaItem =
   | { name: string; content: string }
   | { property: string; content: string };
 
-type SeoProps = {
+export type SeoProps = {
   description?: string;
   lang?: string;
   meta?: MetaItem[];
   title: string;
 };
-
-const Seo = ({ description, lang, meta, title }: SeoProps): JSX.Element => {
+const Seo = ({
+  description = '',
+  lang = 'en',
+  meta = [],
+  title
+}: SeoProps): JSX.Element => {
   const { site } = useStaticQuery(
     graphql`
       query {
@@ -78,12 +82,6 @@ const Seo = ({ description, lang, meta, title }: SeoProps): JSX.Element => {
       meta={baseMeta.concat(userDefinedMeta)}
     />
   );
-};
-
-Seo.defaultProps = {
-  description: '',
-  lang: 'en',
-  meta: []
 };
 
 export default Seo;

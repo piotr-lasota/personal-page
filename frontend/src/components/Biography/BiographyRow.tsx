@@ -1,14 +1,13 @@
 import { Grid } from '@mui/material';
 import React, { ReactNode } from 'react';
 
-type BiographyProps = {
+export type BiographyProps = {
   children: ReactNode;
   reverseRowAboveMedium?: boolean;
 };
-
 const BiographyRow = ({
   children,
-  reverseRowAboveMedium
+  reverseRowAboveMedium = false
 }: BiographyProps): JSX.Element => {
   return (
     <Grid
@@ -24,10 +23,6 @@ const BiographyRow = ({
       {children}
     </Grid>
   );
-};
-
-BiographyRow.defaultProps = {
-  reverseRowAboveMedium: false
 };
 
 export default BiographyRow;

@@ -65,6 +65,15 @@ module.exports = {
     'react-hooks/rules-of-hooks': 'error',
     'react/jsx-filename-extension': 'off'
   },
+  overrides: [
+    {
+      files: ['*.stories.tsx'],
+      rules: {
+        'import/no-extraneous-dependencies': 'off',
+        'react/jsx-props-no-spreading': 'off'
+      }
+    }
+  ],
   settings: {
     'import/resolver': {
       node: {

@@ -1,7 +1,11 @@
-/**
- * Implement Gatsby's Browser APIs in this file.
- *
- * See: https://www.gatsbyjs.com/docs/browser-apis/
- */
+/* eslint-disable import/prefer-default-export,@typescript-eslint/explicit-module-boundary-types */
+import React from 'react';
+import { QueryClient, QueryClientProvider } from 'react-query';
 
-// You can delete this file if you're not using it
+export const wrapPageElement = ({ element }) => {
+  const queryClient = new QueryClient();
+
+  return (
+    <QueryClientProvider client={queryClient}>{element}</QueryClientProvider>
+  );
+};

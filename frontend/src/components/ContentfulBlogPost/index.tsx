@@ -10,15 +10,14 @@ type BlogPageProps = {
   title: string;
   content: ContentfulRichText;
 };
-const BlogPost = ({ title, content }: BlogPageProps): JSX.Element => {
-  return (
-    <Box>
-      <Typography variant="h3" align="center" color="primary" sx={{ mb: 5 }}>
-        {title}
-      </Typography>
-      <ContentfulRichText richText={content} />
-    </Box>
-  );
-};
+
+const BlogPost = ({ title, content }: BlogPageProps): JSX.Element => (
+  <Box>
+    <Typography variant="h3" align="center" color="primary" sx={{ mb: 5 }}>
+      {title}
+    </Typography>
+    <ContentfulRichText richText={content} />
+  </Box>
+);
 
 export default BlogPost;

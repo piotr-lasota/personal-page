@@ -1,5 +1,5 @@
 import path from 'path';
-import * as fs from 'fs';
+import { existsSync } from 'fs';
 import gatsbyConfig from './gatsby-config';
 
 const gatsbyPagesFolderPath = ['src', 'pages'];
@@ -15,12 +15,12 @@ const pathToPage = (page: string): string => {
 
 const routeIsAccessible = (route: string): boolean => {
   const pageFilePath = pathToPage(route);
-  if (fs.existsSync(pageFilePath)) {
+  if (existsSync(pageFilePath)) {
     return true;
   }
 
   const indexFilePath = pathToPage(path.join(route, 'index'));
-  return fs.existsSync(indexFilePath);
+  return existsSync(indexFilePath);
 };
 
 describe('Pages config', () => {

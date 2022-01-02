@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { graphql } from 'gatsby';
 import { Box } from '@mui/material';
 import { ContentfulBlogPost, Seo } from '../../components';
@@ -8,6 +8,7 @@ type BlogPostProps = {
     contentfulBlogPost: {
       title: string;
       publishingDate: string;
+      slug: string;
       content: {
         raw: string;
         references: [];

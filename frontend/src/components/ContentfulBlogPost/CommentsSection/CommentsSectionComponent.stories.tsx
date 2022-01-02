@@ -12,13 +12,8 @@ const Template: Story<CommentsSectionComponentProps> = (args) => (
   <CommentsSectionComponent {...args} />
 );
 
-export const Empty: Story<CommentsSectionComponentProps> = Template.bind({});
-Empty.args = {
-  comments: []
-};
-
-export const Some: Story<CommentsSectionComponentProps> = Template.bind({});
-Some.args = {
+export const Basic: Story<CommentsSectionComponentProps> = Template.bind({});
+Basic.args = {
   comments: [
     {
       author: 'John Doe',

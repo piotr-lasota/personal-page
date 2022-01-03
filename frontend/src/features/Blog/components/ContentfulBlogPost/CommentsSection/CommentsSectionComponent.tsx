@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { Grid } from '@mui/material';
 import { Button } from 'gatsby-theme-material-ui';
 import CommentsList from './CommentsList';
-import { Comment } from './models';
+import { Comment } from '../../../models';
 
 export type CommentsSectionComponentProps = {
   onCommentButtonClick?: () => void;

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Comment } from '../models';
+import { Comment } from '../../../../models';
 import NoCommentsLabel from './NoCommentsLabel';
 import CommentsList from './CommentsList';
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Grid } from '@mui/material';
-import { Comment as CommentModel } from '../models';
+import { Comment as CommentModel } from '../../../../models';
 import Comment from './Comment';
 
 const chronologically = (a: CommentModel, b: CommentModel) =>

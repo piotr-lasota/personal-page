@@ -1,6 +1,6 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { Comment as CommentType } from '../models';
+import { Comment as CommentType } from '../../../../models';
 
 const publishingDateFormatOptions: Intl.DateTimeFormatOptions = {
   year: 'numeric',

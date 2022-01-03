@@ -3,7 +3,7 @@ import { Box } from '@mui/material';
 import { useQuery } from 'react-query';
 import CommentsSectionComponent from './CommentsSectionComponent';
 import WriteCommentDialog from './WriteCommentDialog';
-import api from './api';
+import api from '../../../api';
 import CommentsLoadingSpinner from './CommentsLoadingSpinner';
 
 type CommentsSectionContainerProps = {

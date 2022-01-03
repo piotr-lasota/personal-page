@@ -12,7 +12,7 @@ type ContentfulBlogPostData = {
 };
 type QueryData = {
   allContentfulBlogPost: {
-    nodes: ContentfulBlogPostData[];
+    nodes?: ContentfulBlogPostData[];
   };
 };
 const useBlogPostsList = (): ContentfulBlogPostData[] => {
@@ -32,20 +32,23 @@ const useBlogPostsList = (): ContentfulBlogPostData[] => {
     `
   );
 
-  return blogPosts;
+  return blogPosts ?? [];
 };
 
 const Blog = (): JSX.Element => {
   const blogPosts = useBlogPostsList();
+
   return (
     <Box>
       <Seo title="Blog" />
+
       <Grid container direction="column" spacing={10}>
         <Grid item>
           <Typography variant="h2" align="center" color="primary">
             Blog
           </Typography>
         </Grid>
+
         {blogPosts.map((blogPost) => (
           <Grid key={blogPost.slug} item xs={12}>
             <Card elevation={0}>

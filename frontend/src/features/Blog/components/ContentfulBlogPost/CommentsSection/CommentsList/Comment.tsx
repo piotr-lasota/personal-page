@@ -1,6 +1,6 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { Comment as CommentType } from '../../../../models';
+import { PublishedComment } from '../../../../models';
 
 const publishingDateFormatOptions: Intl.DateTimeFormatOptions = {
   year: 'numeric',
@@ -12,7 +12,7 @@ const publishingDateFormatOptions: Intl.DateTimeFormatOptions = {
 };
 
 export type CommentProps = {
-  comment: CommentType;
+  comment: PublishedComment;
 };
 const Comment = ({
   comment: { author, text, publishedAt }

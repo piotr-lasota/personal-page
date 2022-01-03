@@ -1,10 +1,10 @@
 import React from 'react';
-import { Comment } from '../../../../models';
+import { PublishedComment } from '../../../../models';
 import NoCommentsLabel from './NoCommentsLabel';
 import CommentsList from './CommentsList';
 
 export type CommentsListContainerProps = {
-  comments: Comment[];
+  comments: PublishedComment[];
 };
 const CommentsListContainer = ({
   comments

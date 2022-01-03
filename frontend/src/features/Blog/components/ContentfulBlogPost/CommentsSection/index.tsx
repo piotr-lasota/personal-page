@@ -1,10 +1,15 @@
 import React, { useCallback, useState } from 'react';
-import { Box } from '@mui/material';
+import { Box, Snackbar } from '@mui/material';
 import { useQuery } from 'react-query';
+import { IconButton } from 'gatsby-theme-material-ui';
+import CloseIcon from '@mui/icons-material/Close';
 import CommentsSectionComponent from './CommentsSectionComponent';
 import WriteCommentDialog from './WriteCommentDialog';
 import api from '../../../api';
 import CommentsLoadingSpinner from './CommentsLoadingSpinner';
+import { Comment } from '../../../models';
+
+const CommentPostedToastDurationInMilliseconds = 6000;
 
 type CommentsSectionContainerProps = {
   slug: string;
@@ -14,6 +19,9 @@ const CommentsSectionContainer = ({
 }: CommentsSectionContainerProps): JSX.Element => {
   const [commentDialogOpen, setCommentDialogOpen] = useState(false);
 
+  const [showCommentPostedSnackbar, setShowCommentPostedSnackbar] =
+    useState(false);
+
   const fetchCommentsForPost = useCallback(
     () => api.getCommentsForPost(slug),
     [slug]
@@ -21,22 +29,23 @@ const CommentsSectionContainer = ({
 
   const commentsQuery = useQuery(['comments', slug], fetchCommentsForPost);
 
-  const handleCommentClicked = useCallback(
-    () => setCommentDialogOpen(true),
-    [setCommentDialogOpen]
-  );
-  const closeCommentDialog = useCallback(
-    () => setCommentDialogOpen(false),
-    [setCommentDialogOpen]
-  );
-  const handleCancelled = useCallback(
-    () => closeCommentDialog(),
-    [closeCommentDialog]
-  );
-  const handleCommentPosted = useCallback(
-    () => closeCommentDialog(),
-    [closeCommentDialog]
-  );
+  const handleCommentButtonClicked = () => {
+    setCommentDialogOpen(true);
+  };
+
+  const handleCommentCancelled = () => {
+    setCommentDialogOpen(false);
+  };
+
+  const handleCommentPostedSnackbarCancelled = () => {
+    setShowCommentPostedSnackbar(false);
+  };
+
+  const handleCommentPosted = async (comment: Comment): Promise<void> => {
+    setCommentDialogOpen(false);
+    await api.publishCommentForPost(slug, comment);
+    setShowCommentPostedSnackbar(true);
+  };
 
   if (!commentsQuery.data) {
     return <CommentsLoadingSpinner />;
@@ -46,12 +55,28 @@ const CommentsSectionContainer = ({
     <Box>
       <CommentsSectionComponent
         comments={commentsQuery.data}
-        onCommentButtonClick={handleCommentClicked}
+        onCommentButtonClick={handleCommentButtonClicked}
       />
       <WriteCommentDialog
         open={commentDialogOpen}
         onCommentPosted={handleCommentPosted}
-        onCancelled={handleCancelled}
+        onCancelled={handleCommentCancelled}
+      />
+      <Snackbar
+        open={showCommentPostedSnackbar}
+        autoHideDuration={CommentPostedToastDurationInMilliseconds}
+        onClose={handleCommentPostedSnackbarCancelled}
+        message="Comment sent"
+        action={
+          <IconButton
+            size="small"
+            aria-label="close"
+            color="inherit"
+            onClick={handleCommentPostedSnackbarCancelled}
+          >
+            <CloseIcon fontSize="small" />
+          </IconButton>
+        }
       />
     </Box>
   );

@@ -1,22 +1,19 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { Grid } from '@mui/material';
 import { Button } from 'gatsby-theme-material-ui';
 import CommentsList from './CommentsList';
-import { Comment } from '../../../models';
+import { PublishedComment } from '../../../models';
 
 export type CommentsSectionComponentProps = {
   onCommentButtonClick?: () => void;
-  comments: Comment[];
+  comments: PublishedComment[];
 };
 
 const CommentsSectionComponent = ({
   onCommentButtonClick = () => {},
   comments
 }: CommentsSectionComponentProps): JSX.Element => {
-  const handleCommentButtonClicked = useCallback(
-    () => onCommentButtonClick(),
-    [onCommentButtonClick]
-  );
+  const handleCommentButtonClicked = () => onCommentButtonClick();
 
   return (
     <Grid container direction="column" spacing={3}>

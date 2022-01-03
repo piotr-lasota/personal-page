@@ -1,13 +1,13 @@
 import React from 'react';
 import { Grid } from '@mui/material';
-import { Comment as CommentModel } from '../../../../models';
+import { PublishedComment } from '../../../../models';
 import Comment from './Comment';
 
-const chronologically = (a: CommentModel, b: CommentModel) =>
+const chronologically = (a: PublishedComment, b: PublishedComment) =>
   b.publishedAt.getTime() - a.publishedAt.getTime();
 
 export type CommentsListProps = {
-  comments: CommentModel[];
+  comments: PublishedComment[];
 };
 const CommentsList = ({ comments }: CommentsListProps): JSX.Element => (
   <Grid container direction="column" spacing={1}>

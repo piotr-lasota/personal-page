@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React, { useCallback } from 'react';
+import React from 'react';
 import {
   Dialog,
   DialogActions,
@@ -9,21 +9,11 @@ import {
 } from '@mui/material';
 import { Button } from 'gatsby-theme-material-ui';
 import { useForm } from 'react-hook-form';
-
-type CommentData = {
-  author: string;
-  text: string;
-};
-
-type PostedComment = {
-  author: string;
-  text: string;
-  submittedAt: Date;
-};
+import { Comment } from '../../../models';
 
 export type WriteCommentDialogProps = {
   open?: boolean;
-  onCommentPosted?: (comment: PostedComment) => void;
+  onCommentPosted?: (comment: Comment) => void;
   onCancelled?: () => void;
 };
 const WriteCommentDialog = ({
@@ -35,19 +25,12 @@ const WriteCommentDialog = ({
     register,
     handleSubmit,
     formState: { errors }
-  } = useForm<CommentData>();
+  } = useForm<Comment>();
 
-  const handleCancelClicked = useCallback(() => onCancelled(), [onCancelled]);
+  const handleCancelClicked = () => onCancelled();
 
-  const handleSubmitClicked = useCallback(
-    (comment: CommentData) => {
-      onCommentPosted({
-        author: comment.author,
-        text: comment.text,
-        submittedAt: new Date()
-      });
-    },
-    [onCommentPosted]
+  const handleSubmitClicked = handleSubmit((comment: Comment) =>
+    onCommentPosted(comment)
   );
 
   return (
@@ -81,7 +64,7 @@ const WriteCommentDialog = ({
       </DialogContent>
       <DialogActions>
         <Button onClick={handleCancelClicked}>Cancel</Button>
-        <Button onClick={handleSubmit(handleSubmitClicked)}>Post</Button>
+        <Button onClick={handleSubmitClicked}>Post</Button>
       </DialogActions>
     </Dialog>
   );

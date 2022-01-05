@@ -32,6 +32,7 @@
     "react-syntax-highlighter": "^15.4.5"
   },
   "devDependencies": {
+    "@azure/static-web-apps-cli": "^0.8.2",
     "@babel/core": "^7.16.7",
     "@storybook/addon-actions": "^6.4.9",
     "@storybook/addon-essentials": "^6.4.9",
@@ -73,7 +74,8 @@
   "license": "0BSD",
   "scripts": {
     "build": "gatsby build",
-    "develop": "gatsby develop",
+    "develop-gatsby": "gatsby develop",
+    "develop-swa": "swa start http://localhost:8000/ --api-location http://localhost:7071/",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
     "start": "gatsby develop",
     "serve": "gatsby serve",

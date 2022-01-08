@@ -19,13 +19,13 @@ type BlogPostProps = {
 };
 const BlogPost = ({
   data: {
-    contentfulBlogPost: { content, title }
+    contentfulBlogPost: { content, title, slug }
   }
 }: BlogPostProps): JSX.Element => {
   return (
     <Box>
       <Seo title={title} />
-      <ContentfulBlogPost title={title} content={content} />
+      <ContentfulBlogPost title={title} content={content} slug={slug} />
     </Box>
   );
 };

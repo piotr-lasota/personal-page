@@ -45,6 +45,7 @@ const CommentsSectionContainer = ({
     setCommentDialogOpen(false);
     await api.publishCommentForPost(slug, comment);
     setShowCommentPostedSnackbar(true);
+    await commentsQuery.refetch();
   };
 
   if (!commentsQuery.data) {

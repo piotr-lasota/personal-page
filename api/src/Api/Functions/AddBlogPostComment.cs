@@ -8,23 +8,27 @@ using Domain.Models;
 using Domain.Repositories;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
+using Microsoft.Extensions.Logging;
 
 namespace Api.Functions;
 
 public class AddBlogPostComment
 {
     private readonly IBlogPostRepository _blogPostRepository;
+    private readonly ILogger<AddBlogPostComment> _logger;
 
-    public AddBlogPostComment(IBlogPostRepository blogPostRepository)
+    public AddBlogPostComment(
+        IBlogPostRepository blogPostRepository,
+        ILogger<AddBlogPostComment> logger)
     {
         _blogPostRepository = blogPostRepository;
+        _logger = logger;
     }
 
     [Function(nameof(AddBlogPostComment))]
     public async Task<HttpResponseData> Run(
         [HttpTrigger(AuthorizationLevel.Function, "post", Route = "blog/posts/{slug}/comments")]
         HttpRequestData req,
-        FunctionContext executionContext,
         string slug)
     {
         var cancellationTokenSource = new CancellationTokenSource();
@@ -34,6 +38,7 @@ public class AddBlogPostComment
 
         if (post is null)
         {
+            _logger.LogInformation("No post with slug {Slug} found", slug);
             var response = req.CreateResponse(HttpStatusCode.NotFound);
             return response;
         }
@@ -43,6 +48,7 @@ public class AddBlogPostComment
 
         if (!ok)
         {
+            _logger.LogInformation("Invalid comment request provided");
             var response = req.CreateResponse(HttpStatusCode.BadRequest);
             return response;
         }
@@ -55,16 +61,23 @@ public class AddBlogPostComment
         post.AddComment(comment);
 
         await _blogPostRepository.SaveAsync(post, token);
-
+        _logger.LogInformation(
+            "Successfully added comment by {Author} to {Slug}",
+            comment.User,
+            slug);
         return req.CreateResponse(HttpStatusCode.Created);
     }
 
     private class AddBlogPostCommentRequestBody
     {
         [Required]
+        [MinLength(BlogPostComment.MinimumUserLength)]
+        [MaxLength(BlogPostComment.MaximumUserLength)]
         public string? Author { get; set; }
 
         [Required]
+        [MinLength(BlogPostComment.MinimumCommentLength)]
+        [MaxLength(BlogPostComment.MaximumCommentLength)]
         public string? Text { get; set; }
     }
 }

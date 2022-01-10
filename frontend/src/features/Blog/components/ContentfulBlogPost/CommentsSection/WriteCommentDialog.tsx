@@ -47,7 +47,11 @@ const WriteCommentDialog = ({
           type="email"
           variant="standard"
           error={!!errors.author}
-          {...register('author', { required: true, minLength: 3 })}
+          {...register('author', {
+            required: true,
+            minLength: 3,
+            maxLength: 100
+          })}
         />
         <TextField
           multiline
@@ -59,7 +63,11 @@ const WriteCommentDialog = ({
           type="text"
           variant="standard"
           error={!!errors.text}
-          {...register('text', { required: true, minLength: 1 })}
+          {...register('text', {
+            required: true,
+            minLength: 1,
+            maxLength: 1000
+          })}
         />
       </DialogContent>
       <DialogActions>

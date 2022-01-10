@@ -11,31 +11,31 @@ namespace Api.Functions;
 public class GetBlogPostComments
 {
     private readonly IBlogPostRepository _blogPostRepository;
+    private readonly ILogger<GetBlogPostComments> _logger;
 
     public GetBlogPostComments(
-        IBlogPostRepository blogPostRepository)
+        IBlogPostRepository blogPostRepository,
+        ILogger<GetBlogPostComments> logger)
     {
         _blogPostRepository = blogPostRepository;
+        _logger = logger;
     }
 
     [Function(nameof(GetBlogPostComments))]
     public async Task<HttpResponseData> Run(
         [HttpTrigger(AuthorizationLevel.Function, "get", Route = "blog/posts/{slug}/comments")]
         HttpRequestData req,
-        FunctionContext executionContext,
         string slug)
     {
-        var logger = executionContext.GetLogger<GetBlogPostComments>();
-
         var post = await _blogPostRepository.GetBySlug(slug, CancellationToken.None);
 
         if (post is null)
         {
-            logger.LogInformation("No post with slug {Slug} found", slug);
+            _logger.LogInformation("No post with slug {Slug} found", slug);
             return req.CreateResponse(HttpStatusCode.NotFound);
         }
 
-        logger.LogInformation(
+        _logger.LogInformation(
             "Returning {NumberOfComments} comments for post {Slug}",
             post.Comments.Count,
             post.Slug);

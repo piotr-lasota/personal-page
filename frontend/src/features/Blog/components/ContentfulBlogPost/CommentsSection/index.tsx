@@ -1,15 +1,13 @@
 import React, { useCallback, useState } from 'react';
-import { Box, Snackbar } from '@mui/material';
+import { Alert, Box, Snackbar } from '@mui/material';
 import { useQuery } from 'react-query';
-import { IconButton } from 'gatsby-theme-material-ui';
-import CloseIcon from '@mui/icons-material/Close';
 import CommentsSectionComponent from './CommentsSectionComponent';
 import WriteCommentDialog from './WriteCommentDialog';
 import api from '../../../api';
 import CommentsLoadingSpinner from './CommentsLoadingSpinner';
 import { Comment } from '../../../models';
 
-const CommentPostedToastDurationInMilliseconds = 6000;
+const ToastDurationInMilliseconds = 6000;
 
 type CommentsSectionContainerProps = {
   slug: string;
@@ -21,6 +19,11 @@ const CommentsSectionContainer = ({
 
   const [showCommentPostedSnackbar, setShowCommentPostedSnackbar] =
     useState(false);
+
+  const [
+    showCommentPostingFailedSnackbar,
+    setShowCommentPostingFailedSnackbar
+  ] = useState(false);
 
   const fetchCommentsForPost = useCallback(
     () => api.getCommentsForPost(slug),
@@ -41,11 +44,20 @@ const CommentsSectionContainer = ({
     setShowCommentPostedSnackbar(false);
   };
 
+  const handleCommentPostingFailedSnackbarCancelled = () => {
+    setShowCommentPostingFailedSnackbar(false);
+  };
+
   const handleCommentPosted = async (comment: Comment): Promise<void> => {
     setCommentDialogOpen(false);
-    await api.publishCommentForPost(slug, comment);
-    setShowCommentPostedSnackbar(true);
-    await commentsQuery.refetch();
+    try {
+      await api.publishCommentForPost(slug, comment);
+      setShowCommentPostedSnackbar(true);
+    } catch {
+      setShowCommentPostingFailedSnackbar(true);
+    } finally {
+      await commentsQuery.refetch();
+    }
   };
 
   if (!commentsQuery.data) {
@@ -65,20 +77,30 @@ const CommentsSectionContainer = ({
       />
       <Snackbar
         open={showCommentPostedSnackbar}
-        autoHideDuration={CommentPostedToastDurationInMilliseconds}
+        autoHideDuration={ToastDurationInMilliseconds}
         onClose={handleCommentPostedSnackbarCancelled}
-        message="Comment sent"
-        action={
-          <IconButton
-            size="small"
-            aria-label="close"
-            color="inherit"
-            onClick={handleCommentPostedSnackbarCancelled}
-          >
-            <CloseIcon fontSize="small" />
-          </IconButton>
-        }
-      />
+      >
+        <Alert
+          onClose={handleCommentPostedSnackbarCancelled}
+          severity="success"
+          variant="filled"
+        >
+          Comment sent
+        </Alert>
+      </Snackbar>
+      <Snackbar
+        open={showCommentPostingFailedSnackbar}
+        autoHideDuration={ToastDurationInMilliseconds}
+        onClose={handleCommentPostingFailedSnackbarCancelled}
+      >
+        <Alert
+          onClose={handleCommentPostingFailedSnackbarCancelled}
+          severity="error"
+          variant="filled"
+        >
+          Posting a comment failed, please try again later
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

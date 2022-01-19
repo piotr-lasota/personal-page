@@ -17,7 +17,7 @@ module.exports = {
     description:
       'Personal page with opinions of my own and not that of the company I work for',
     author: 'Piotr Lasota',
-    siteUrl: 'https://piotr-lasota.pl/',
+    siteUrl: process.env.SITE_URL,
     pages: [
       {
         name: 'Home',
@@ -82,8 +82,8 @@ module.exports = {
     {
       resolve: 'gatsby-source-contentful',
       options: {
-        spaceId: process.env.SPACE_ID,
-        accessToken: process.env.DELIVERY_API_KEY
+        spaceId: process.env.CONTENTFUL_SPACE_ID,
+        accessToken: process.env.CONTENTFUL_DELIVERY_API_KEY
       }
     }
   ]

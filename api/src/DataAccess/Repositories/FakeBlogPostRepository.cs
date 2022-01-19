@@ -11,7 +11,7 @@ public class FakeBlogPostRepository : IBlogPostRepository
     public FakeBlogPostRepository()
     {
         var fakeBlogPost = new BlogPost(
-            "how-to-azure-static-web-apps",
+            "getting-contentful-to-work",
             DateTimeOffset.Now.AddDays(-5));
 
         fakeBlogPost.AddComment(new BlogPostComment(

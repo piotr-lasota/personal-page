@@ -39,7 +39,36 @@ const publishCommentForPost = async (
   }
 };
 
+const deleteCommentsInPost = async (
+  slug: string,
+  comments: PublishedComment[]
+): Promise<void> => {
+  const commentsThatFailedToDelete: PublishedComment[] = [];
+
+  const tryDeletingCommentOrPreserveFailed = async (
+    comment: PublishedComment
+  ): Promise<void> => {
+    const response = await fetch(
+      `/api/blog/posts/${slug}/comments/${comment.id}`,
+      {
+        method: 'delete'
+      }
+    );
+
+    if (!response.ok) {
+      commentsThatFailedToDelete.push(comment);
+    }
+  };
+
+  await Promise.all(comments.map(tryDeletingCommentOrPreserveFailed));
+
+  if (commentsThatFailedToDelete.length > 0) {
+    throw new Error('Failed deleting some comments');
+  }
+};
+
 export default {
   getCommentsForPost,
-  publishCommentForPost
+  publishCommentForPost,
+  deleteCommentsInPost
 };

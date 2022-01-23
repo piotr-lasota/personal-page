@@ -2,7 +2,7 @@ namespace Domain.Models;
 
 public class BlogPost
 {
-    private readonly SortedList<DateTimeOffset, BlogPostComment> _comments = new ();
+    private readonly List<BlogPostComment> _comments = new ();
 
     public BlogPost(string slug, DateTimeOffset publishingDate)
     {
@@ -12,10 +12,13 @@ public class BlogPost
     public string Slug { get; }
 
     public IReadOnlyList<BlogPostComment> Comments =>
-        _comments.Values
+        _comments
+           .OrderBy(comment => comment.PublishedAt)
            .Reverse()
            .ToList()
            .AsReadOnly();
 
-    public void AddComment(BlogPostComment comment) => _comments.Add(comment.PublishedAt, comment);
+    public void AddComment(BlogPostComment comment) => _comments.Add(comment);
+
+    public void RemoveComment(BlogPostComment commentToDelete) => _comments.Remove(commentToDelete);
 }

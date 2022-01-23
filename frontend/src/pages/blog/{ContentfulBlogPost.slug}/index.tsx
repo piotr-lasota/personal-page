@@ -1,8 +1,8 @@
 import React from 'react';
 import { graphql } from 'gatsby';
 import { Box } from '@mui/material';
-import { Seo } from '../../components';
-import { ContentfulBlogPost } from '../../features/Blog/components';
+import { Seo } from '../../../components';
+import { ContentfulBlogPost } from '../../../features/Blog/components';
 
 type BlogPostProps = {
   data: {

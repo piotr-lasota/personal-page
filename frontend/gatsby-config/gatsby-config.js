@@ -23,10 +23,10 @@ module.exports = {
         name: 'Home',
         link: ''
       },
-      {
-        name: 'Bio',
-        link: 'bio'
-      },
+      // {
+      //   name: 'Bio',
+      //   link: 'bio'
+      // },
       {
         name: 'Blog',
         link: 'blog'

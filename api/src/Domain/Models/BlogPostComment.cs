@@ -10,6 +10,7 @@ public class BlogPostComment
 
     public BlogPostComment(string user, string text, DateTimeOffset publishedAt)
     {
+        Id = Guid.NewGuid();
         User = user;
         Text = text;
         PublishedAt = publishedAt;
@@ -30,6 +31,8 @@ public class BlogPostComment
                 throw new ArgumentException("Comment too long", nameof(text));
         }
     }
+
+    public Guid Id { get; }
 
     public string User { get; }
 

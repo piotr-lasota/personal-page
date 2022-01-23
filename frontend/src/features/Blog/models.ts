@@ -4,5 +4,6 @@ export type Comment = {
 };
 
 export type PublishedComment = Comment & {
+  id: string;
   publishedAt: Date;
 };

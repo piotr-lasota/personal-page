@@ -1,6 +1,7 @@
 import { Comment, PublishedComment } from './models';
 
 type CommentResponse = {
+  id: string;
   user: string;
   text: string;
   publishedAt: string;
@@ -17,6 +18,7 @@ const getCommentsForPost = async (
   const content: CommentResponse[] = await response.json();
 
   return content.map((comment) => ({
+    id: comment.id,
     author: comment.user,
     text: comment.text,
     publishedAt: new Date(comment.publishedAt)

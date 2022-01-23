@@ -14,12 +14,12 @@ namespace Api.Functions;
 
 public class AddBlogPostComment
 {
-    private readonly IBlogPostRepository _blogPostRepository;
     private readonly ILogger<AddBlogPostComment> _logger;
+    private readonly IBlogPostRepository _blogPostRepository;
 
     public AddBlogPostComment(
-        IBlogPostRepository blogPostRepository,
-        ILogger<AddBlogPostComment> logger)
+        ILogger<AddBlogPostComment> logger,
+        IBlogPostRepository blogPostRepository)
     {
         _blogPostRepository = blogPostRepository;
         _logger = logger;

@@ -10,12 +10,12 @@ namespace Api.Functions;
 
 public class GetBlogPostComments
 {
-    private readonly IBlogPostRepository _blogPostRepository;
     private readonly ILogger<GetBlogPostComments> _logger;
+    private readonly IBlogPostRepository _blogPostRepository;
 
     public GetBlogPostComments(
-        IBlogPostRepository blogPostRepository,
-        ILogger<GetBlogPostComments> logger)
+        ILogger<GetBlogPostComments> logger,
+        IBlogPostRepository blogPostRepository)
     {
         _blogPostRepository = blogPostRepository;
         _logger = logger;

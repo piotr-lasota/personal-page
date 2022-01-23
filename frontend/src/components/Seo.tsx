@@ -11,11 +11,13 @@ export type SeoProps = {
   lang?: string;
   meta?: MetaItem[];
   title: string;
+  noIndex?: boolean;
 };
 const Seo = ({
   description = '',
   lang = 'en',
   meta = [],
+  noIndex = false,
   title
 }: SeoProps): JSX.Element => {
   const { site } = useStaticQuery(
@@ -67,8 +69,14 @@ const Seo = ({
     {
       name: 'twitter:description',
       content: metaDescription
-    }
-  ];
+    },
+    noIndex
+      ? {
+          name: 'robots',
+          content: 'noindex'
+        }
+      : null
+  ].flatMap((metaElement) => (metaElement ? [metaElement] : []));
 
   const userDefinedMeta = meta ?? [];
 

@@ -3,15 +3,17 @@ import { Grid } from '@mui/material';
 import { PublishedComment } from '../../../../models';
 import Comment from './Comment';
 
-const chronologically = (a: PublishedComment, b: PublishedComment) =>
+const latestFirst = (a: PublishedComment, b: PublishedComment) =>
   b.publishedAt.getTime() - a.publishedAt.getTime();
 
 export type CommentsListProps = {
   comments: PublishedComment[];
 };
-const CommentsList = ({ comments }: CommentsListProps): JSX.Element => (
+const CommentsListComponent = ({
+  comments
+}: CommentsListProps): JSX.Element => (
   <Grid container direction="column" spacing={1}>
-    {comments.sort(chronologically).map((comment) => (
+    {comments.sort(latestFirst).map((comment) => (
       <Grid item key={`${comment.author}-${comment.publishedAt}`}>
         <Comment comment={comment} />
       </Grid>
@@ -19,4 +21,4 @@ const CommentsList = ({ comments }: CommentsListProps): JSX.Element => (
   </Grid>
 );
 
-export default CommentsList;
+export default CommentsListComponent;

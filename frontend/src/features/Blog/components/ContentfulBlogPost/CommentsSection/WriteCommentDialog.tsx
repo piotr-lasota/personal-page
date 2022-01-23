@@ -17,7 +17,7 @@ export type WriteCommentDialogProps = {
   onCancelled?: () => void;
 };
 const WriteCommentDialog = ({
-  open,
+  open = false,
   onCommentPosted = () => {},
   onCancelled = () => {}
 }: WriteCommentDialogProps): JSX.Element => {
@@ -34,7 +34,7 @@ const WriteCommentDialog = ({
   );
 
   return (
-    <Dialog open={!!open}>
+    <Dialog open={open}>
       <DialogTitle>Comment</DialogTitle>
       <DialogContent>
         <TextField

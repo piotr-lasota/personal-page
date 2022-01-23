@@ -1,7 +1,7 @@
 import React from 'react';
 import { PublishedComment } from '../../../../models';
 import NoCommentsLabel from './NoCommentsLabel';
-import CommentsList from './CommentsList';
+import CommentsListComponent from './CommentsListComponent';
 
 export type CommentsListContainerProps = {
   comments: PublishedComment[];
@@ -13,7 +13,7 @@ const CommentsListContainer = ({
     return <NoCommentsLabel />;
   }
 
-  return <CommentsList comments={comments} />;
+  return <CommentsListComponent comments={comments} />;
 };
 
 export default CommentsListContainer;

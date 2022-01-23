@@ -6,8 +6,7 @@ import WriteCommentDialog from './WriteCommentDialog';
 import api from '../../../api';
 import CommentsLoadingSpinner from './CommentsLoadingSpinner';
 import { Comment } from '../../../models';
-
-const ToastDurationInMilliseconds = 6000;
+import { ToastDurationInMilliseconds } from '../../../../../constants';
 
 type CommentsSectionContainerProps = {
   slug: string;

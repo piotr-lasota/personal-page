@@ -18,5 +18,6 @@ const Template: Story<WriteCommentDialogProps> = (props) => (
 
 export const Dialog: Story<WriteCommentDialogProps> = Template.bind({});
 Dialog.args = {
-  open: true
+  open: true,
+  canPost: true
 };

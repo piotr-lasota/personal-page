@@ -14,6 +14,7 @@ type CommentsSectionContainerProps = {
 const CommentsSectionContainer = ({
   slug
 }: CommentsSectionContainerProps): JSX.Element => {
+  const [canPostComment, setCanPostComment] = useState(true);
   const [commentDialogOpen, setCommentDialogOpen] = useState(false);
 
   const [showCommentPostedSnackbar, setShowCommentPostedSnackbar] =
@@ -48,6 +49,7 @@ const CommentsSectionContainer = ({
   };
 
   const handleCommentPosted = async (comment: Comment): Promise<void> => {
+    setCanPostComment(false);
     setCommentDialogOpen(false);
     try {
       await api.publishCommentForPost(slug, comment);
@@ -56,6 +58,7 @@ const CommentsSectionContainer = ({
       setShowCommentPostingFailedSnackbar(true);
     } finally {
       await commentsQuery.refetch();
+      setCanPostComment(true);
     }
   };
 
@@ -70,6 +73,7 @@ const CommentsSectionContainer = ({
         onCommentButtonClick={handleCommentButtonClicked}
       />
       <WriteCommentDialog
+        canPost={canPostComment}
         open={commentDialogOpen}
         onCommentPosted={handleCommentPosted}
         onCancelled={handleCommentCancelled}

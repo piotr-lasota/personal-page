@@ -54,8 +54,8 @@ public class AddBlogPostComment
         }
 
         var comment = new BlogPostComment(
-            addBlogPostRequest.Author,
-            addBlogPostRequest.Text,
+            addBlogPostRequest!.Author!,
+            addBlogPostRequest.Text!,
             DateTimeOffset.Now);
 
         post.AddComment(comment);

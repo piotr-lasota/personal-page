@@ -1,8 +1,11 @@
 using System;
 using System.Linq;
 using System.Net;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
+using Api.Authorization;
+using Api.Extensions;
 using Domain.Repositories;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
@@ -35,6 +38,14 @@ public class DeleteBlogPostComment
     {
         var cancellationTokenSource = new CancellationTokenSource();
         var token = cancellationTokenSource.Token;
+
+        var claimsPrincipal = req.ParseClaimsPrincipal();
+
+        if (!claimsPrincipal.HasClaim(ClaimTypes.Role, ApplicationRoles.Owner))
+        {
+            LogUnauthorizedAttemptToDeleteAComment(idOfCommentToDelete, claimsPrincipal);
+            return req.CreateResponse(HttpStatusCode.Unauthorized);
+        }
 
         var post = await _blogPostRepository.GetBySlug(slug, token);
 
@@ -69,5 +80,47 @@ public class DeleteBlogPostComment
             slug);
 
         return req.CreateResponse(HttpStatusCode.OK);
+    }
+
+    private void LogUnauthorizedAttemptToDeleteAComment(
+        Guid idOfCommentToDelete,
+        ClaimsPrincipal claimsPrincipal)
+    {
+        var provider = claimsPrincipal.Identity?.AuthenticationType;
+
+        var userId = claimsPrincipal
+           .FindFirst(claim => claim.Type == ClaimTypes.NameIdentifier)
+          ?.Value;
+
+        var name = claimsPrincipal
+           .FindFirst(claim => claim.Type == ClaimTypes.Name)
+          ?.Value;
+
+        var roles = claimsPrincipal
+           .FindAll(claim =>
+                        claim.Type != ClaimTypes.Name &&
+                        claim.Type != ClaimTypes.NameIdentifier)
+           .Select(claim => claim.Value)
+           .ToHashSet();
+
+        if (provider is null &&
+            userId is null &&
+            name is null &&
+            roles.Count == 0)
+        {
+            _logger.LogWarning(
+                "Unauthenticated attempted to delete comment {CommentId}",
+                idOfCommentToDelete);
+        }
+        else
+        {
+            _logger.LogWarning(
+                "Unauthorized attempt to delete comment {CommentId} by {Provider}, {UserId}, {Name}, {Roles}",
+                idOfCommentToDelete,
+                provider,
+                userId,
+                name,
+                string.Join(", ", roles));
+        }
     }
 }

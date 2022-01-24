@@ -1,0 +1,14 @@
+{
+  "routes": [
+    {
+      "route": "/blog/*/comments",
+      "allowedRoles": ["owner"]
+    }
+  ],
+  "responseOverrides": {
+    "401": {
+      "statusCode": 302,
+      "redirect": "/"
+    }
+  }
+}

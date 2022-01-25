@@ -10,7 +10,7 @@ namespace Api.Extensions;
 public static class StreamExtensions
 {
     public static async Task<(bool, TExpected?)>
-        TryDeserializeToValidType<TExpected>(
+        TryDeserializingToValidTypeAsync<TExpected>(
             this Stream stream,
             CancellationToken cancellationToken)
     {

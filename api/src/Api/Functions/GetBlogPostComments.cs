@@ -27,7 +27,7 @@ public class GetBlogPostComments
         HttpRequestData req,
         string slug)
     {
-        var post = await _blogPostRepository.GetBySlug(slug, CancellationToken.None);
+        var post = await _blogPostRepository.GetBySlugAsync(slug, CancellationToken.None);
 
         if (post is null)
         {

@@ -30,7 +30,7 @@ public class FakeBlogPostRepository : IBlogPostRepository
             (_, post) => post);
     }
 
-    public async Task<BlogPost?> GetBySlug(string slug, CancellationToken cancellationToken)
+    public async Task<BlogPost?> GetBySlugAsync(string slug, CancellationToken cancellationToken)
     {
         await Task.Delay(100, cancellationToken);
 

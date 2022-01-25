@@ -24,7 +24,7 @@ public class StreamExtensionsTests
 
         // Act
         var (succeeded, someClass) = await Stream
-           .TryDeserializeToValidType<SomeClass>(CancellationToken.None);
+           .TryDeserializingToValidTypeAsync<SomeClass>(CancellationToken.None);
 
         // Assert
         succeeded.Should().BeTrue();
@@ -45,7 +45,7 @@ public class StreamExtensionsTests
 
         // Act
         var (succeeded, list) = await Stream
-           .TryDeserializeToValidType<IList<SomeClass>>(CancellationToken.None);
+           .TryDeserializingToValidTypeAsync<IList<SomeClass>>(CancellationToken.None);
 
         // Assert
         succeeded.Should().BeTrue();
@@ -76,7 +76,7 @@ public class StreamExtensionsTests
 
         // Act
         var (succeeded, someClass) = await Stream
-               .TryDeserializeToValidType<
+               .TryDeserializingToValidTypeAsync<
                     SomeClass>(CancellationToken
                    .None);
 

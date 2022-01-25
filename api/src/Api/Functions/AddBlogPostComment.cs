@@ -34,7 +34,7 @@ public class AddBlogPostComment
         var cancellationTokenSource = new CancellationTokenSource();
         var token = cancellationTokenSource.Token;
 
-        var post = await _blogPostRepository.GetBySlug(slug, token);
+        var post = await _blogPostRepository.GetBySlugAsync(slug, token);
 
         if (post is null)
         {
@@ -44,7 +44,7 @@ public class AddBlogPostComment
         }
 
         var (ok, addBlogPostRequest) = await req.Body
-           .TryDeserializeToValidType<AddBlogPostCommentRequestBody>(token);
+           .TryDeserializingToValidTypeAsync<AddBlogPostCommentRequestBody>(token);
 
         if (!ok)
         {

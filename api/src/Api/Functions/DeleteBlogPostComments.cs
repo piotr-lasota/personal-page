@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Security.Claims;
@@ -13,28 +14,27 @@ using Microsoft.Extensions.Logging;
 
 namespace Api.Functions;
 
-public class DeleteBlogPostComment
+public class DeleteBlogPostComments
 {
-    private readonly ILogger<DeleteBlogPostComment> _logger;
+    private readonly ILogger<DeleteBlogPostComments> _logger;
     private readonly IBlogPostRepository _blogPostRepository;
 
-    public DeleteBlogPostComment(
+    public DeleteBlogPostComments(
         IBlogPostRepository blogPostRepository,
-        ILogger<DeleteBlogPostComment> logger)
+        ILogger<DeleteBlogPostComments> logger)
     {
         _logger = logger;
         _blogPostRepository = blogPostRepository;
     }
 
-    [Function(nameof(DeleteBlogPostComment))]
+    [Function(nameof(DeleteBlogPostComments))]
     public async Task<HttpResponseData> Run(
         [HttpTrigger(
             AuthorizationLevel.Function,
             "delete",
-            Route = "blog/posts/{slug}/comments/{idOfCommentToDelete:guid}")]
+            Route = "blog/posts/{slug}/comments")]
         HttpRequestData req,
-        string slug,
-        Guid idOfCommentToDelete)
+        string slug)
     {
         var cancellationTokenSource = new CancellationTokenSource();
         var token = cancellationTokenSource.Token;
@@ -43,47 +43,68 @@ public class DeleteBlogPostComment
 
         if (!claimsPrincipal.HasClaim(ClaimTypes.Role, ApplicationRoles.Owner))
         {
-            LogUnauthorizedAttemptToDeleteAComment(idOfCommentToDelete, claimsPrincipal);
+            LogUnauthorizedAttemptToDeleteComments(slug, claimsPrincipal);
             return req.CreateResponse(HttpStatusCode.Unauthorized);
         }
 
-        var post = await _blogPostRepository.GetBySlug(slug, token);
+        var (ok, bodyIdStrings) = await req.Body
+           .TryDeserializingToValidTypeAsync<List<Guid>>(token);
+
+        if (!ok)
+        {
+            return req.CreateResponse(HttpStatusCode.UnprocessableEntity);
+        }
+
+        ISet<Guid> idsOfCommentsToBeDeleted = bodyIdStrings!.ToHashSet();
+
+        if (idsOfCommentsToBeDeleted.Count == 0)
+        {
+            return req.CreateResponse(HttpStatusCode.UnprocessableEntity);
+        }
+
+        var post = await _blogPostRepository.GetBySlugAsync(slug, token);
 
         if (post is null)
         {
             _logger.LogInformation("No post with slug {Slug} found", slug);
-            var response = req.CreateResponse(HttpStatusCode.NotFound);
-            return response;
+            return req.CreateResponse(HttpStatusCode.NotFound);
         }
 
-        var commentToDelete = post.Comments
-           .SingleOrDefault(comment => comment.Id == idOfCommentToDelete);
+        var commentsToDelete = post.Comments
+           .Where(comment => idsOfCommentsToBeDeleted.Contains(comment.Id))
+           .ToList();
 
-        if (commentToDelete is null)
+        if (commentsToDelete.Count != idsOfCommentsToBeDeleted.Count)
         {
+            var missedCommentIds = idsOfCommentsToBeDeleted
+               .Except(post.Comments.Select(comment => comment.Id))
+               .ToHashSet();
+
             _logger.LogInformation(
-                "No comment with id {Id} found on post {Slug} found",
-                idOfCommentToDelete,
+                "Comments {CommentIds} were not found on post {Slug} found",
+                missedCommentIds,
                 slug);
 
-            var response = req.CreateResponse(HttpStatusCode.NotFound);
-            return response;
+            return req.CreateResponse(HttpStatusCode.NotFound);
         }
 
-        post.RemoveComment(commentToDelete);
+        foreach (var commentToDelete in commentsToDelete)
+        {
+            post.RemoveComment(commentToDelete);
+        }
 
         await _blogPostRepository.SaveAsync(post, token);
 
         _logger.LogInformation(
-            "Successfully removed comment {Id} from post {Slug}",
-            idOfCommentToDelete,
+            "Successfully removed comments {CommentIds} from post {Slug}",
+            idsOfCommentsToBeDeleted,
             slug);
 
         return req.CreateResponse(HttpStatusCode.OK);
     }
 
-    private void LogUnauthorizedAttemptToDeleteAComment(
-        Guid idOfCommentToDelete,
+    private void LogUnauthorizedAttemptToDeleteComments(
+        string postSlug,
         ClaimsPrincipal claimsPrincipal)
     {
         var provider = claimsPrincipal.Identity?.AuthenticationType;
@@ -109,14 +130,14 @@ public class DeleteBlogPostComment
             roles.Count == 0)
         {
             _logger.LogWarning(
-                "Unauthenticated attempted to delete comment {CommentId}",
-                idOfCommentToDelete);
+                "Anonymous attempt to delete comments on post {Slug}",
+                postSlug);
         }
         else
         {
             _logger.LogWarning(
-                "Unauthorized attempt to delete comment {CommentId} by {Provider}, {UserId}, {Name}, {Roles}",
-                idOfCommentToDelete,
+                "Unauthorized attempt to delete comments on post {Slug} by {Provider}, {UserId}, {Name}, {Roles}",
+                postSlug,
                 provider,
                 userId,
                 name,

@@ -14,4 +14,5 @@ module "custom_name" {
   zone_name                    = azurerm_dns_zone.homepage.name
   static_site_id               = azurerm_static_site.website.id
   static_site_default_hostname = azurerm_static_site.website.default_host_name
+  txt_validation_token         = var.txt_validation_token
 }

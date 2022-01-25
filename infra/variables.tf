@@ -22,3 +22,10 @@ variable "environment_number" {
   description = "Environment suffix for resource instance"
   type        = number
 }
+
+variable "txt_validation_token" {
+  description = "Manual override of the Custom Domain TXT validation token until https://github.com/hashicorp/terraform-provider-azurerm/issues/14750 is fixed"
+  type        = string
+  nullable    = true
+  default     = null
+}

@@ -27,3 +27,10 @@ variable "top_level_domain" {
   description = "Target top level domain"
   type        = string
 }
+
+variable "txt_validation_token" {
+  description = "Manual override of the Custom Domain TXT validation token until https://github.com/hashicorp/terraform-provider-azurerm/issues/14750 is fixed"
+  type        = string
+  nullable    = true
+  default     = null
+}

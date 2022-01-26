@@ -52,11 +52,11 @@ public class StaticWebAppConfigJsonTests
 
     private class RoutesFocusedConfigFile
     {
-        public IList<RouteConfigElement> Routes { get; set; } = new List<RouteConfigElement>();
+        public IList<RouteConfigElement> Routes { get; init; } = new List<RouteConfigElement>();
     }
 
     private class RouteConfigElement
     {
-        public IList<string> AllowedRoles { get; set; } = new List<string>();
+        public IList<string> AllowedRoles { get; init; } = new List<string>();
     }
 }

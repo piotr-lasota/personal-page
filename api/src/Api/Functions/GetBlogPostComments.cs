@@ -1,7 +1,8 @@
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
-using Domain.Repositories;
+using Domain.Errors;
+using Domain.Queries.GetBlogPostComments;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
@@ -11,14 +12,14 @@ namespace Api.Functions;
 public class GetBlogPostComments
 {
     private readonly ILogger<GetBlogPostComments> _logger;
-    private readonly IBlogPostRepository _blogPostRepository;
+    private readonly GetBlogPostCommentsQueryHandler _handler;
 
     public GetBlogPostComments(
         ILogger<GetBlogPostComments> logger,
-        IBlogPostRepository blogPostRepository)
+        GetBlogPostCommentsQueryHandler handler)
     {
-        _blogPostRepository = blogPostRepository;
         _logger = logger;
+        _handler = handler;
     }
 
     [Function(nameof(GetBlogPostComments))]
@@ -27,9 +28,16 @@ public class GetBlogPostComments
         HttpRequestData req,
         string slug)
     {
-        var post = await _blogPostRepository.GetBySlugAsync(slug, CancellationToken.None);
+        if (string.IsNullOrWhiteSpace(slug))
+        {
+            return req.CreateResponse(HttpStatusCode.UnprocessableEntity);
+        }
 
-        if (post is null)
+        var result = await _handler.Handle(
+            new GetBlogPostCommentsQuery(slug),
+            CancellationToken.None);
+
+        if (result.HasError<ResourceNotFoundError>())
         {
             _logger.LogInformation("No post with slug {Slug} found", slug);
             return req.CreateResponse(HttpStatusCode.NotFound);
@@ -37,11 +45,11 @@ public class GetBlogPostComments
 
         _logger.LogInformation(
             "Returning {NumberOfComments} comments for post {Slug}",
-            post.Comments.Count,
-            post.Slug);
+            result.Value.Count,
+            slug);
 
         var response = req.CreateResponse(HttpStatusCode.OK);
-        await response.WriteAsJsonAsync(post.Comments);
+        await response.WriteAsJsonAsync(result.Value);
         return response;
     }
 }

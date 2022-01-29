@@ -1,5 +1,6 @@
 using System.Text.Json;
 using DataAccess.Repositories;
+using Domain.Queries.GetBlogPostComments;
 using Domain.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -17,7 +18,14 @@ public static class Program
                 {
                     services.Configure<JsonSerializerOptions>(
                         options => { options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase; });
-                    services.AddSingleton<IBlogPostRepository, FakeBlogPostRepository>();
+
+                    services.AddSingleton<
+                        IBlogPostRepository,
+                        FakeBlogPostRepository>();
+
+                    services.AddScoped<
+                        GetBlogPostCommentsQueryHandler,
+                        GetBlogPostCommentsQueryHandler>();
                 })
            .Build();
 

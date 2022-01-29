@@ -7,7 +7,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Api.Authorization;
 using Api.Extensions;
-using Domain.Repositories;
+using Domain.Commands.DeleteBlogPostComments;
+using Domain.Errors;
+using Domain.Models;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
@@ -17,14 +19,14 @@ namespace Api.Functions;
 public class DeleteBlogPostComments
 {
     private readonly ILogger<DeleteBlogPostComments> _logger;
-    private readonly IBlogPostRepository _blogPostRepository;
+    private readonly DeleteBlogPostCommentsCommandHandler _handler;
 
     public DeleteBlogPostComments(
-        IBlogPostRepository blogPostRepository,
-        ILogger<DeleteBlogPostComments> logger)
+        ILogger<DeleteBlogPostComments> logger,
+        DeleteBlogPostCommentsCommandHandler handler)
     {
         _logger = logger;
-        _blogPostRepository = blogPostRepository;
+        _handler = handler;
     }
 
     [Function(nameof(DeleteBlogPostComments))]
@@ -62,45 +64,44 @@ public class DeleteBlogPostComments
             return req.CreateResponse(HttpStatusCode.UnprocessableEntity);
         }
 
-        var post = await _blogPostRepository.GetBySlugAsync(slug, token);
+        var result = await _handler.Handle(
+            new DeleteBlogPostCommentsCommand(slug, idsOfCommentsToBeDeleted),
+            token);
 
-        if (post is null)
+        if (result.IsSuccess)
         {
-            _logger.LogInformation("No post with slug {Slug} found", slug);
-            return req.CreateResponse(HttpStatusCode.NotFound);
-        }
-
-        var commentsToDelete = post.Comments
-           .Where(comment => idsOfCommentsToBeDeleted.Contains(comment.Id))
-           .ToList();
-
-        if (commentsToDelete.Count != idsOfCommentsToBeDeleted.Count)
-        {
-            var missedCommentIds = idsOfCommentsToBeDeleted
-               .Except(post.Comments.Select(comment => comment.Id))
-               .ToHashSet();
-
             _logger.LogInformation(
-                "Comments {CommentIds} were not found on post {Slug} found",
-                missedCommentIds,
+                "Successfully removed comments {CommentIds} from post {Slug}",
+                idsOfCommentsToBeDeleted,
                 slug);
 
-            return req.CreateResponse(HttpStatusCode.NotFound);
+            return req.CreateResponse(HttpStatusCode.OK);
         }
 
-        foreach (var commentToDelete in commentsToDelete)
+        var missingResourceType = result.Errors
+           .OfType<ResourceNotFoundError>()
+           .Single()
+           .ResourceType?.ToString();
+
+        switch (missingResourceType)
         {
-            post.RemoveComment(commentToDelete);
+            case nameof(BlogPost):
+                _logger.LogInformation("No post with slug {Slug} found", slug);
+                break;
+            case nameof(BlogPostComment):
+                _logger.LogInformation(
+                    "Not all {CommentIds} were found on post {Slug}",
+                    idsOfCommentsToBeDeleted,
+                    slug);
+                break;
+            default:
+                _logger.LogWarning(
+                    "Handler returned an unexpected {Type} of missing resource",
+                    missingResourceType);
+                break;
         }
 
-        await _blogPostRepository.SaveAsync(post, token);
-
-        _logger.LogInformation(
-            "Successfully removed comments {CommentIds} from post {Slug}",
-            idsOfCommentsToBeDeleted,
-            slug);
-
-        return req.CreateResponse(HttpStatusCode.OK);
+        return req.CreateResponse(HttpStatusCode.NotFound);
     }
 
     private void LogUnauthorizedAttemptToDeleteComments(

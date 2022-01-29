@@ -69,11 +69,11 @@ const ToggleableCommentsList = ({
   ] = useListOfCommentsToDelete();
 
   const handleCommentToggled = useCallback(
-    (comment: PublishedComment, isToggled: boolean) => {
-      if (isToggled) {
-        markForDeletion(comment);
-      } else {
+    (comment: PublishedComment, wasToggled: boolean) => {
+      if (wasToggled) {
         unmarkForDeletion(comment);
+      } else {
+        markForDeletion(comment);
       }
     },
     [markForDeletion, unmarkForDeletion]

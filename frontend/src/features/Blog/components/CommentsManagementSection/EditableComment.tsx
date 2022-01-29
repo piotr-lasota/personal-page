@@ -22,7 +22,7 @@ const EditableComment = ({
   onToggleClicked = () => {}
 }: EditableCommentProps): JSX.Element => {
   const handleCommentToggleClicked = () => {
-    onToggleClicked(comment, !isToggled);
+    onToggleClicked(comment, isToggled);
   };
 
   const publishingDateText = comment.publishedAt.toLocaleString(

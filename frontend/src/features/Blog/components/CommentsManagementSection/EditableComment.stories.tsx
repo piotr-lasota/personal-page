@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Story } from '@storybook/react';
 import EditableComment, { EditableCommentProps } from './EditableComment';
 
@@ -7,19 +7,10 @@ export default {
 };
 
 const Template: Story<EditableCommentProps> = (args) => {
-  const [isToggled, setIsToggled] = useState(false);
-
-  const argsToRender: EditableCommentProps = {
-    ...args,
-    isToggled,
-    onToggleClicked: (_, toggled) => setIsToggled(toggled)
-  };
-
-  return <EditableComment {...argsToRender} />;
+  return <EditableComment {...args} />;
 };
 export const Empty: Story<EditableCommentProps> = Template.bind({});
 Empty.args = {
-  isToggled: false,
   comment: {
     id: '9a1be8e7-f2ad-4123-b233-fb2b32d5c56f',
     author: 'John Doe',

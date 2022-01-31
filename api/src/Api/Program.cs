@@ -1,5 +1,6 @@
 using System.Text.Json;
 using DataAccess.Repositories;
+using Domain.Commands.AddBlogPostComment;
 using Domain.Commands.DeleteBlogPostComments;
 using Domain.Queries.GetBlogPostComments;
 using Domain.Repositories;
@@ -31,6 +32,10 @@ public static class Program
                     services.AddScoped<
                         DeleteBlogPostCommentsCommandHandler,
                         DeleteBlogPostCommentsCommandHandler>();
+
+                    services.AddScoped<
+                        AddBlogPostCommentCommandHandler,
+                        AddBlogPostCommentCommandHandler>();
                 })
            .Build();
 

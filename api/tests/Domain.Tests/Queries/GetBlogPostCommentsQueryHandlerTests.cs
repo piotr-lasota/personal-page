@@ -7,6 +7,7 @@ using Domain.Models;
 using Domain.Queries.GetBlogPostComments;
 using Domain.Repositories;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
 
@@ -34,7 +35,9 @@ public class GetBlogPostCommentsQueryHandlerTests
                           It.IsAny<CancellationToken>()))
            .ReturnsAsync(_existingBlogPost);
 
-        _subject = new GetBlogPostCommentsQueryHandler(_blogPostRepositoryMock.Object);
+        _subject = new GetBlogPostCommentsQueryHandler(
+            new Mock<ILogger<GetBlogPostCommentsQueryHandler>>().Object,
+            _blogPostRepositoryMock.Object);
     }
 
     [Fact]

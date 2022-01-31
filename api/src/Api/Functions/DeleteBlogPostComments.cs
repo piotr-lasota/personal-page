@@ -9,7 +9,6 @@ using Api.Authorization;
 using Api.Extensions;
 using Domain.Commands.DeleteBlogPostComments;
 using Domain.Errors;
-using Domain.Models;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
@@ -45,7 +44,10 @@ public class DeleteBlogPostComments
 
         if (!claimsPrincipal.HasClaim(ClaimTypes.Role, ApplicationRoles.Owner))
         {
-            LogUnauthorizedAttemptToDeleteComments(slug, claimsPrincipal);
+            _logger.LogUnauthorizedActivityAttempt(
+                claimsPrincipal,
+                "Attempt to delete comments on post {Slug}",
+                slug);
             return req.CreateResponse(HttpStatusCode.Unauthorized);
         }
 
@@ -70,79 +72,11 @@ public class DeleteBlogPostComments
 
         if (result.IsSuccess)
         {
-            _logger.LogInformation(
-                "Successfully removed comments {CommentIds} from post {Slug}",
-                idsOfCommentsToBeDeleted,
-                slug);
-
             return req.CreateResponse(HttpStatusCode.OK);
         }
 
-        var missingResourceType = result.Errors
-           .OfType<ResourceNotFoundError>()
-           .Single()
-           .ResourceType?.ToString();
-
-        switch (missingResourceType)
-        {
-            case nameof(BlogPost):
-                _logger.LogInformation("No post with slug {Slug} found", slug);
-                break;
-            case nameof(BlogPostComment):
-                _logger.LogInformation(
-                    "Not all {CommentIds} were found on post {Slug}",
-                    idsOfCommentsToBeDeleted,
-                    slug);
-                break;
-            default:
-                _logger.LogWarning(
-                    "Handler returned an unexpected {Type} of missing resource",
-                    missingResourceType);
-                break;
-        }
-
-        return req.CreateResponse(HttpStatusCode.NotFound);
-    }
-
-    private void LogUnauthorizedAttemptToDeleteComments(
-        string postSlug,
-        ClaimsPrincipal claimsPrincipal)
-    {
-        var provider = claimsPrincipal.Identity?.AuthenticationType;
-
-        var userId = claimsPrincipal
-           .FindFirst(claim => claim.Type == ClaimTypes.NameIdentifier)
-          ?.Value;
-
-        var name = claimsPrincipal
-           .FindFirst(claim => claim.Type == ClaimTypes.Name)
-          ?.Value;
-
-        var roles = claimsPrincipal
-           .FindAll(claim =>
-                        claim.Type != ClaimTypes.Name &&
-                        claim.Type != ClaimTypes.NameIdentifier)
-           .Select(claim => claim.Value)
-           .ToHashSet();
-
-        if (provider is null &&
-            userId is null &&
-            name is null &&
-            roles.Count == 0)
-        {
-            _logger.LogWarning(
-                "Anonymous attempt to delete comments on post {Slug}",
-                postSlug);
-        }
-        else
-        {
-            _logger.LogWarning(
-                "Unauthorized attempt to delete comments on post {Slug} by {Provider}, {UserId}, {Name}, {Roles}",
-                postSlug,
-                provider,
-                userId,
-                name,
-                string.Join(", ", roles));
-        }
+        return req.CreateResponse(result.HasError<ResourceNotFoundError>()
+            ? HttpStatusCode.NotFound
+            : HttpStatusCode.UnprocessableEntity);
     }
 }

@@ -37,16 +37,18 @@ public class GetBlogPostComments
             new GetBlogPostCommentsQuery(slug),
             CancellationToken.None);
 
-        if (result.HasError<ResourceNotFoundError>())
+        if (result.IsFailed)
         {
-            _logger.LogInformation("No post with slug {Slug} found", slug);
-            return req.CreateResponse(HttpStatusCode.NotFound);
-        }
+            var isNotFound = result.HasError<ResourceNotFoundError>();
 
-        _logger.LogInformation(
-            "Returning {NumberOfComments} comments for post {Slug}",
-            result.Value.Count,
-            slug);
+            if (isNotFound)
+            {
+                return req.CreateResponse(HttpStatusCode.NotFound);
+            }
+
+            _logger.LogError("Handler failed with unexpected {Errors}", result.Errors);
+            return req.CreateResponse(HttpStatusCode.InternalServerError);
+        }
 
         var response = req.CreateResponse(HttpStatusCode.OK);
         await response.WriteAsJsonAsync(result.Value);

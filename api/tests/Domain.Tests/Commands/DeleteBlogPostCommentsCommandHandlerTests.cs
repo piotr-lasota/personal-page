@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Domain.Commands.DeleteBlogPostComments;
+using Domain.Errors;
 using Domain.Models;
 using Domain.Repositories;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
 
@@ -29,7 +32,9 @@ public class DeleteBlogPostCommentsCommandHandlerTests
                           It.IsAny<CancellationToken>()))
            .ReturnsAsync(_existingBlogPost);
 
-        _subject = new DeleteBlogPostCommentsCommandHandler(_blogPostRepositoryMock.Object);
+        _subject = new DeleteBlogPostCommentsCommandHandler(
+            new Mock<ILogger<DeleteBlogPostCommentsCommandHandler>>().Object,
+            _blogPostRepositoryMock.Object);
     }
 
     [Fact]
@@ -58,7 +63,11 @@ public class DeleteBlogPostCommentsCommandHandlerTests
 
         var command = new DeleteBlogPostCommentsCommand(
             _existingBlogPost.Slug,
-            new HashSet<Guid> { firstCommentToBeDeleted.Id, secondCommentToBeDeleted.Id });
+            new HashSet<Guid>
+            {
+                firstCommentToBeDeleted.Id,
+                secondCommentToBeDeleted.Id,
+            });
 
         // Act
         var result = await _subject.Handle(command, CancellationToken.None);
@@ -75,5 +84,60 @@ public class DeleteBlogPostCommentsCommandHandlerTests
                        repository.SaveAsync(
                            _existingBlogPost,
                            It.IsAny<CancellationToken>()));
+    }
+
+    [Fact]
+    public async Task ReturnsNotFoundErrorWhenBlogPostDoesNotExist()
+    {
+        // Arrange
+        var command = new DeleteBlogPostCommentsCommand(
+            "this-post-does-not-exist",
+            new HashSet<Guid>
+            {
+                Guid.NewGuid(),
+            });
+
+        // Act
+        var result = await _subject.Handle(command, CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.Should().BeFalse();
+
+        result.Errors.Should().HaveCount(1);
+        result.Errors.Single()
+           .Should()
+           .BeOfType<ResourceNotFoundError>();
+    }
+
+    [Fact]
+    public async Task ReturnsNotFoundErrorWhenAnyCommentDoesNotExist()
+    {
+        // Arrange
+        var existingComment =
+            new BlogPostComment(
+                "John",
+                "I don't like this post",
+                DateTimeOffset.Now.AddDays(-1));
+
+        var nonExistingCommentId = Guid.NewGuid();
+
+        var command = new DeleteBlogPostCommentsCommand(
+            _existingBlogPost.Slug,
+            new HashSet<Guid>
+            {
+                existingComment.Id,
+                nonExistingCommentId,
+            });
+
+        // Act
+        var result = await _subject.Handle(command, CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.Should().BeFalse();
+
+        result.Errors.Should().HaveCount(1);
+        result.Errors.Single()
+           .Should()
+           .BeOfType<ResourceNotFoundError>();
     }
 }

@@ -1,11 +1,11 @@
-using System;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using Api.Extensions;
+using Domain.Commands.AddBlogPostComment;
+using Domain.Errors;
 using Domain.Models;
-using Domain.Repositories;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
@@ -15,14 +15,14 @@ namespace Api.Functions;
 public class AddBlogPostComment
 {
     private readonly ILogger<AddBlogPostComment> _logger;
-    private readonly IBlogPostRepository _blogPostRepository;
+    private readonly AddBlogPostCommentCommandHandler _handler;
 
     public AddBlogPostComment(
         ILogger<AddBlogPostComment> logger,
-        IBlogPostRepository blogPostRepository)
+        AddBlogPostCommentCommandHandler handler)
     {
-        _blogPostRepository = blogPostRepository;
         _logger = logger;
+        _handler = handler;
     }
 
     [Function(nameof(AddBlogPostComment))]
@@ -34,15 +34,6 @@ public class AddBlogPostComment
         var cancellationTokenSource = new CancellationTokenSource();
         var token = cancellationTokenSource.Token;
 
-        var post = await _blogPostRepository.GetBySlugAsync(slug, token);
-
-        if (post is null)
-        {
-            _logger.LogInformation("No post with slug {Slug} found", slug);
-            var response = req.CreateResponse(HttpStatusCode.NotFound);
-            return response;
-        }
-
         var (ok, addBlogPostRequest) = await req.Body
            .TryDeserializingToValidTypeAsync<AddBlogPostCommentRequestBody>(token);
 
@@ -53,19 +44,21 @@ public class AddBlogPostComment
             return response;
         }
 
-        var comment = new BlogPostComment(
-            addBlogPostRequest!.Author!,
-            addBlogPostRequest.Text!,
-            DateTimeOffset.Now);
+        var result = await _handler.Handle(
+            new AddBlogPostCommentCommand(
+                slug,
+                addBlogPostRequest!.Author!,
+                addBlogPostRequest.Text!),
+            token);
 
-        post.AddComment(comment);
+        if (result.IsSuccess)
+        {
+            return req.CreateResponse(HttpStatusCode.Created);
+        }
 
-        await _blogPostRepository.SaveAsync(post, token);
-        _logger.LogInformation(
-            "Successfully added comment by {Author} to {Slug}",
-            comment.User,
-            slug);
-        return req.CreateResponse(HttpStatusCode.Created);
+        return req.CreateResponse(result.HasError<ResourceNotFoundError>()
+            ? HttpStatusCode.NotFound
+            : HttpStatusCode.UnprocessableEntity);
     }
 
     private class AddBlogPostCommentRequestBody

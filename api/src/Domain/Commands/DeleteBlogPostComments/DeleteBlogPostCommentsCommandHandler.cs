@@ -1,16 +1,20 @@
 using Domain.Errors;
-using Domain.Models;
 using Domain.Repositories;
 using FluentResults;
+using Microsoft.Extensions.Logging;
 
 namespace Domain.Commands.DeleteBlogPostComments;
 
 public class DeleteBlogPostCommentsCommandHandler : ICommandHandler<DeleteBlogPostCommentsCommand>
 {
+    private readonly ILogger<DeleteBlogPostCommentsCommandHandler> _logger;
     private readonly IBlogPostRepository _blogPostRepository;
 
-    public DeleteBlogPostCommentsCommandHandler(IBlogPostRepository blogPostRepository)
+    public DeleteBlogPostCommentsCommandHandler(
+        ILogger<DeleteBlogPostCommentsCommandHandler> logger,
+        IBlogPostRepository blogPostRepository)
     {
+        _logger = logger;
         _blogPostRepository = blogPostRepository;
     }
 
@@ -22,7 +26,8 @@ public class DeleteBlogPostCommentsCommandHandler : ICommandHandler<DeleteBlogPo
 
         if (post is null)
         {
-            return Result.Fail(new ResourceNotFoundError(typeof(BlogPost)));
+            _logger.LogInformation("No post with slug {Slug} found", command.PostSlug);
+            return Result.Fail(new ResourceNotFoundError());
         }
 
         var commentsToDelete = post.Comments
@@ -31,7 +36,16 @@ public class DeleteBlogPostCommentsCommandHandler : ICommandHandler<DeleteBlogPo
 
         if (commentsToDelete.Count != command.CommentIds.Count)
         {
-            return Result.Fail(new ResourceNotFoundError(typeof(BlogPostComment)));
+            var missedCommentIds = command.CommentIds
+               .Except(post.Comments.Select(comment => comment.Id))
+               .ToHashSet();
+
+            _logger.LogInformation(
+                "Comments {CommentIds} were not found on post {Slug}",
+                missedCommentIds,
+                command.PostSlug);
+
+            return Result.Fail(new ResourceNotFoundError());
         }
 
         foreach (var commentToDelete in commentsToDelete)
@@ -40,6 +54,11 @@ public class DeleteBlogPostCommentsCommandHandler : ICommandHandler<DeleteBlogPo
         }
 
         await _blogPostRepository.SaveAsync(post, cancellationToken);
+
+        _logger.LogInformation(
+            "Successfully removed comments {CommentIds} from post {Slug}",
+            command.CommentIds,
+            command.PostSlug);
 
         return Result.Ok();
     }

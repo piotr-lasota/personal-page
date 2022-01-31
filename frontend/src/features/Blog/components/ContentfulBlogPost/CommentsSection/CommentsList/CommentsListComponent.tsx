@@ -14,7 +14,7 @@ const CommentsListComponent = ({
 }: CommentsListProps): JSX.Element => (
   <Grid container direction="column" spacing={1}>
     {comments.sort(latestFirst).map((comment) => (
-      <Grid item key={`${comment.author}-${comment.publishedAt}`}>
+      <Grid item key={`${comment.id}`}>
         <Comment comment={comment} />
       </Grid>
     ))}

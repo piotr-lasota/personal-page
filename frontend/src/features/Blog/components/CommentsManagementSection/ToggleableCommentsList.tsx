@@ -113,7 +113,7 @@ const ToggleableCommentsList = ({
           <Divider />
         </Grid>
         {comments.sort(latestFirst).map((comment) => (
-          <Grid item key={`${comment.author}-${comment.publishedAt}`}>
+          <Grid item key={`${comment.id}`}>
             <EditableComment
               isToggled={mapOfCommentsMarkedForDeletion.has(comment.id)}
               comment={comment}

@@ -10,6 +10,6 @@ resource "azurerm_dns_txt_record" "txt-root" {
   resource_group_name = var.resource_group_name
   ttl                 = var.ttl
   record {
-    value = try(var.txt_validation_token, azurerm_static_site_custom_domain.txt-root.validation_token)
+    value = var.txt_validation_token != null ? var.txt_validation_token : azurerm_static_site_custom_domain.txt-root.validation_token
   }
 }

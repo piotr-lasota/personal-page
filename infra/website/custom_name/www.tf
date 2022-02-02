@@ -1,6 +1,6 @@
 resource "azurerm_static_site_custom_domain" "www-cname" {
   static_site_id  = var.static_site_id
-  domain_name     = "www.${local.website_domain_name}"
+  domain_name     = "${azurerm_dns_cname_record.www-cname.name}.${local.website_domain_name}"
   validation_type = "cname-delegation"
 }
 

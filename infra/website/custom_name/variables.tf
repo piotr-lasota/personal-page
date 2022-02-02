@@ -39,4 +39,5 @@ variable "txt_validation_token" {
   type        = string
   nullable    = true
   default     = null
+  sensitive   = true
 }

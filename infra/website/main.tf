@@ -1,5 +1,5 @@
 resource "azurerm_static_site" "website" {
-  name                = local.azurerm_static_site_name
+  name                = format("app-%s", local.resources_core_name)
   resource_group_name = var.resource_group_name
   location            = var.location
   sku_size            = "Free"

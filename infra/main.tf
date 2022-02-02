@@ -18,11 +18,6 @@ provider "azurerm" {
   features {}
 }
 
-resource "azurerm_resource_group" "homepage" {
-  name     = "rg-piotr-lasota.dev"
-  location = var.azure_location
-}
-
 module "homepage" {
   source               = "./website"
   resource_group_name  = azurerm_resource_group.homepage.name

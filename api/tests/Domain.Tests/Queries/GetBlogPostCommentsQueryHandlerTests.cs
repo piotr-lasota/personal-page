@@ -18,7 +18,7 @@ public class GetBlogPostCommentsQueryHandlerTests
     private readonly GetBlogPostCommentsQueryHandler _subject;
 
     private readonly Mock<IBlogPostRepository> _blogPostRepositoryMock = new ();
-    private readonly BlogPost _existingBlogPost = new ("slug", DateTimeOffset.Now);
+    private readonly BlogPost _existingBlogPost = new ("slug");
 
     public GetBlogPostCommentsQueryHandlerTests()
     {

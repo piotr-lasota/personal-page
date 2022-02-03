@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -20,8 +18,7 @@ public class AddBlogPostCommentCommandHandlerTests
 
     private readonly Mock<IBlogPostRepository> _blogPostRepositoryMock = new ();
 
-    private readonly BlogPost _existingBlogPost = new ("slug", DateTimeOffset.Now);
-    private readonly List<BlogPostComment> _comments = new ();
+    private readonly BlogPost _existingBlogPost = new ("slug");
 
     public AddBlogPostCommentCommandHandlerTests()
     {

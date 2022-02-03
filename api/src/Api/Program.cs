@@ -1,4 +1,5 @@
 using System.Text.Json;
+using DataAccess;
 using DataAccess.Repositories;
 using Domain.Commands.AddBlogPostComment;
 using Domain.Commands.DeleteBlogPostComments;
@@ -21,9 +22,11 @@ public static class Program
                     services.Configure<JsonSerializerOptions>(
                         options => { options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase; });
 
+                    services.AddSingleton(ApplicationCosmosClient.Build());
+
                     services.AddSingleton<
                         IBlogPostRepository,
-                        FakeBlogPostRepository>();
+                        CosmosDbBlogPostRepository>();
 
                     services.AddScoped<
                         GetBlogPostCommentsQueryHandler,

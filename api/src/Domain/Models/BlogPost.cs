@@ -4,7 +4,7 @@ public class BlogPost
 {
     private readonly List<BlogPostComment> _comments = new ();
 
-    public BlogPost(string slug, DateTimeOffset publishingDate)
+    public BlogPost(string slug)
     {
         Slug = slug;
     }

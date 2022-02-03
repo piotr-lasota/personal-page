@@ -8,9 +8,25 @@ public class BlogPostComment
     public const int MinimumCommentLength = 1;
     public const int MaximumCommentLength = 1000;
 
-    public BlogPostComment(string user, string text, DateTimeOffset publishedAt)
+    public BlogPostComment(
+        string user,
+        string text,
+        DateTimeOffset publishedAt)
+        : this(
+            Guid.NewGuid(),
+            user,
+            text,
+            publishedAt)
     {
-        Id = Guid.NewGuid();
+    }
+
+    public BlogPostComment(
+        Guid id,
+        string user,
+        string text,
+        DateTimeOffset publishedAt)
+    {
+        Id = id;
         User = user;
         Text = text;
         PublishedAt = publishedAt;

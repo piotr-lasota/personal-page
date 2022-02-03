@@ -11,8 +11,7 @@ public class FakeBlogPostRepository : IBlogPostRepository
     public FakeBlogPostRepository()
     {
         var fakeBlogPost = new BlogPost(
-            "getting-contentful-to-work",
-            DateTimeOffset.Now.AddDays(-5));
+            "getting-contentful-to-work");
 
         fakeBlogPost.AddComment(new BlogPostComment(
             "johnDoe123",

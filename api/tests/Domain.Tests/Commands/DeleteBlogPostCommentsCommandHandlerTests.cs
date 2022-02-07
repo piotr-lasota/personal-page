@@ -21,7 +21,6 @@ public class DeleteBlogPostCommentsCommandHandlerTests
     private readonly Mock<IBlogPostRepository> _blogPostRepositoryMock = new ();
 
     private readonly BlogPost _existingBlogPost = new ("slug");
-    private readonly List<BlogPostComment> _comments = new ();
 
     public DeleteBlogPostCommentsCommandHandlerTests()
     {

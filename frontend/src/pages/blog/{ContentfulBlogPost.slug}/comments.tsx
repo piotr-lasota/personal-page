@@ -2,7 +2,7 @@ import React from 'react';
 import { Box } from '@mui/material';
 import { graphql } from 'gatsby';
 import { Seo } from '../../../components';
-import CommentsManagerContainer from '../../../features/Blog/components/CommentsManagementSection';
+import { CommentsManagementSection } from '../../../features/Blog/components';
 
 type ManageCommentsPageProps = {
   data: {
@@ -19,7 +19,7 @@ const ManageCommentsPage = ({
 }: ManageCommentsPageProps): JSX.Element => (
   <Box>
     <Seo title="Manage comments" noIndex />
-    <CommentsManagerContainer title={title} slug={slug} />
+    <CommentsManagementSection title={title} slug={slug} />
   </Box>
 );
 

@@ -1,5 +1,15 @@
 import { Comment, PublishedComment } from './models';
 
+const registerPost = async (slug: string): Promise<void> => {
+  const response = await fetch(`/api/blog/posts/${slug}`, {
+    method: 'put'
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed registering a post');
+  }
+};
+
 type CommentResponse = {
   id: string;
   user: string;
@@ -56,6 +66,7 @@ const deleteCommentsInPost = async (
 };
 
 export default {
+  registerPost,
   getCommentsForPost,
   publishCommentForPost,
   deleteCommentsInPost

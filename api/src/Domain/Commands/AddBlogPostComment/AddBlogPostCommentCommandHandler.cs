@@ -39,6 +39,7 @@ public class AddBlogPostCommentCommandHandler : ICommandHandler<AddBlogPostComme
         post.AddComment(comment);
 
         await _blogPostRepository.SaveAsync(post, cancellationToken);
+
         _logger.LogInformation(
             "Successfully added comment by {Author} to {Slug}",
             comment.User,

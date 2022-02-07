@@ -72,11 +72,12 @@ public class DeleteBlogPostComments
 
         if (result.IsSuccess)
         {
-            return req.CreateResponse(HttpStatusCode.OK);
+            return req.CreateResponse(HttpStatusCode.NoContent);
         }
 
-        return req.CreateResponse(result.HasError<ResourceNotFoundError>()
-            ? HttpStatusCode.NotFound
-            : HttpStatusCode.UnprocessableEntity);
+        return req.CreateResponse(
+            result.HasError<ResourceNotFoundError>()
+                ? HttpStatusCode.NotFound
+                : HttpStatusCode.UnprocessableEntity);
     }
 }

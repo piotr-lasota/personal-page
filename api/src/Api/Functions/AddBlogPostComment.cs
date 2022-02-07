@@ -56,9 +56,10 @@ public class AddBlogPostComment
             return req.CreateResponse(HttpStatusCode.Created);
         }
 
-        return req.CreateResponse(result.HasError<ResourceNotFoundError>()
-            ? HttpStatusCode.NotFound
-            : HttpStatusCode.UnprocessableEntity);
+        return req.CreateResponse(
+            result.HasError<ResourceNotFoundError>()
+                ? HttpStatusCode.NotFound
+                : HttpStatusCode.UnprocessableEntity);
     }
 
     private class AddBlogPostCommentRequestBody

@@ -1,4 +1,6 @@
-import Seo from './Seo';
+import ErrorPage from './ErrorPage';
 import NavigationBar from './NavigationBar';
+import Seo from './Seo';
+import Toast from './Toast';
 
-export { Seo, NavigationBar };
+export { ErrorPage, NavigationBar, Seo, Toast };

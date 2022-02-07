@@ -1,15 +1,22 @@
 using System.Collections.Concurrent;
 using Domain.Models;
 using Domain.Repositories;
+using Microsoft.Extensions.Logging;
 
 namespace DataAccess.Repositories;
 
 public class FakeBlogPostRepository : IBlogPostRepository
 {
-    private readonly ConcurrentDictionary<string, BlogPost> _blogPosts = new (Environment.ProcessorCount, 100);
+    private readonly ILogger<FakeBlogPostRepository> _logger;
 
-    public FakeBlogPostRepository()
+    private readonly ConcurrentDictionary<string, BlogPost> _blogPosts =
+        new (Environment.ProcessorCount, 100);
+
+    public FakeBlogPostRepository(
+        ILogger<FakeBlogPostRepository> logger)
     {
+        _logger = logger;
+
         var fakeBlogPost = new BlogPost(
             "getting-contentful-to-work");
 
@@ -32,8 +39,20 @@ public class FakeBlogPostRepository : IBlogPostRepository
     public async Task<BlogPost?> GetBySlugAsync(string slug, CancellationToken cancellationToken)
     {
         await Task.Delay(100, cancellationToken);
+        var wasFound = _blogPosts.TryGetValue(slug, out var blogPost);
 
-        _blogPosts.TryGetValue(slug, out var blogPost);
+        if (wasFound)
+        {
+            _logger.LogInformation(
+                "Post {Slug} found",
+                slug);
+        }
+        else
+        {
+            _logger.LogInformation(
+                "Post {Slug} not found",
+                slug);
+        }
 
         return blogPost;
     }
@@ -41,6 +60,9 @@ public class FakeBlogPostRepository : IBlogPostRepository
     public async Task SaveAsync(BlogPost blogPost, CancellationToken cancellationToken)
     {
         await Task.Delay(100, cancellationToken);
+
+        _logger.LogInformation("Saved post {Slug}", blogPost.Slug);
+
         _blogPosts.AddOrUpdate(blogPost.Slug, blogPost, (_, _) => blogPost);
     }
 }

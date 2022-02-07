@@ -1,6 +1,10 @@
 {
   "routes": [
     {
+      "route": "/blog/register",
+      "allowedRoles": ["owner"]
+    },
+    {
       "route": "/blog/*/comments",
       "allowedRoles": ["owner"]
     },

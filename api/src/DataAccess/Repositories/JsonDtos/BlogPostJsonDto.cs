@@ -7,4 +7,6 @@ public record BlogPostJsonDto
     public string Type => BlogPostCollectionTypeValue;
 
     public string Slug { get; set; } = string.Empty;
+
+    public string Id => Slug;
 }

@@ -101,8 +101,11 @@ public class CosmosDbBlogPostRepository : IBlogPostRepository
         }
 
         _logger.LogError(
-            "Batch update failed with {Error}",
-            batchResponse.ErrorMessage);
+            "Batch update failed with {Error} when saving post {Slug}",
+            batchResponse.ErrorMessage,
+            blogPost.Slug);
+
+        throw new ApplicationException($"Failed saving post {blogPost.Slug}");
     }
 
     private static BlogPostJsonDto ToJsonDto(BlogPost blogPost)
@@ -142,15 +145,17 @@ public class CosmosDbBlogPostRepository : IBlogPostRepository
         }
         catch (CosmosException cosmosException)
         {
-            if (cosmosException.StatusCode != System.Net.HttpStatusCode.NotFound)
+            if (cosmosException.StatusCode == System.Net.HttpStatusCode.NotFound)
             {
-                _logger.LogError(
-                    cosmosException,
-                    "Fetching Blog Post {Slug} failed, pretending it was not found",
-                    slug);
+                return null;
             }
 
-            return null;
+            _logger.LogError(
+                cosmosException,
+                "Fetching Blog Post {Slug} failed",
+                slug);
+
+            throw;
         }
     }
 
@@ -187,11 +192,17 @@ public class CosmosDbBlogPostRepository : IBlogPostRepository
         }
         catch (CosmosException cosmosException)
         {
+            if (cosmosException.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                return new List<BlogPostComment>();
+            }
+
             _logger.LogError(
                 cosmosException,
                 "Fetching Blog Post Comments for {Slug} failed",
                 slug);
-            return new List<BlogPostComment>();
+
+            throw;
         }
 
         return blogPostComments

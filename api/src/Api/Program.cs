@@ -3,6 +3,7 @@ using DataAccess;
 using DataAccess.Repositories;
 using Domain.Commands.AddBlogPostComment;
 using Domain.Commands.DeleteBlogPostComments;
+using Domain.Commands.RegisterBlogPost;
 using Domain.Queries.GetBlogPostComments;
 using Domain.Repositories;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,17 +29,11 @@ public static class Program
                         IBlogPostRepository,
                         CosmosDbBlogPostRepository>();
 
-                    services.AddScoped<
-                        GetBlogPostCommentsQueryHandler,
-                        GetBlogPostCommentsQueryHandler>();
+                    services.AddScoped<GetBlogPostCommentsQueryHandler>();
+                    services.AddScoped<DeleteBlogPostCommentsCommandHandler>();
+                    services.AddScoped<AddBlogPostCommentCommandHandler>();
 
-                    services.AddScoped<
-                        DeleteBlogPostCommentsCommandHandler,
-                        DeleteBlogPostCommentsCommandHandler>();
-
-                    services.AddScoped<
-                        AddBlogPostCommentCommandHandler,
-                        AddBlogPostCommentCommandHandler>();
+                    services.AddScoped<RegisterBlogPostCommandHandler>();
                 })
            .Build();
 

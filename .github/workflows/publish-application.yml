@@ -55,6 +55,13 @@ jobs:
           CONTENTFUL_DELIVERY_API_KEY: ${{ secrets.CONTENTFUL_DELIVERY_API_KEY }}
           CONTENTFUL_SPACE_ID: ${{ secrets.CONTENTFUL_SPACE_ID }}
           SITE_URL: ${{ secrets.WEBSITE_URL }}
+      
+      - name: Generate staticwebapp.config.json file
+        working-directory: frontend
+        run: yarn build-swa-config
+        env:
+          CONTENTFUL_DELIVERY_API_KEY: ${{ secrets.CONTENTFUL_DELIVERY_API_KEY }}
+          CONTENTFUL_SPACE_ID: ${{ secrets.CONTENTFUL_SPACE_ID }}
 
       - name: Copy settings file to Gatsby output
         working-directory: frontend

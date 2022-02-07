@@ -25,11 +25,11 @@ jobs:
         working-directory: api
         run: dotnet restore
 
-      - name: Build
+      - name: Build the API
         working-directory: api
         run: dotnet build --no-restore --no-incremental /WarnAsError
 
-      - name: Test
+      - name: Run API tests
         working-directory: api
         run: dotnet test --no-restore --no-build
 
@@ -44,17 +44,21 @@ jobs:
         working-directory: frontend
         run: yarn --frozen-lockfile
 
-      - name: Test
+      - name: Run Site tests
         working-directory: frontend
         run: yarn test
 
-      - name: Build
+      - name: Build Gatsby output
         working-directory: frontend
         run: yarn build
         env:
           CONTENTFUL_DELIVERY_API_KEY: ${{ secrets.CONTENTFUL_DELIVERY_API_KEY }}
           CONTENTFUL_SPACE_ID: ${{ secrets.CONTENTFUL_SPACE_ID }}
           SITE_URL: ${{ secrets.WEBSITE_URL }}
+
+      - name: Copy settings file to Gatsby output
+        working-directory: frontend
+        run: cp staticwebapp.config.json public/
 
       - name: Archive Gatsby output
         uses: actions/upload-artifact@v2

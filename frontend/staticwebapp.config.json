@@ -2,11 +2,15 @@
   "routes": [
     {
       "route": "/blog/register",
-      "allowedRoles": ["owner"]
+      "allowedRoles": [
+        "owner"
+      ]
     },
     {
       "route": "/blog/*/comments",
-      "allowedRoles": ["owner"]
+      "allowedRoles": [
+        "owner"
+      ]
     },
     {
       "route": "/login",
@@ -36,6 +40,9 @@
   "responseOverrides": {
     "401": {
       "redirect": "/401"
+    },
+    "404": {
+      "redirect": "/404"
     }
   }
 }

@@ -7,6 +7,12 @@
       ]
     },
     {
+      "route": "/blog/*/comments",
+      "allowedRoles": [
+        "owner"
+      ]
+    },
+    {
       "route": "/login",
       "redirect": "/.auth/login/github"
     },

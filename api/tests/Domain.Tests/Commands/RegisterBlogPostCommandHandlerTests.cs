@@ -18,7 +18,7 @@ public class RegisterBlogPostCommandHandlerTests
 
     private readonly Mock<IBlogPostRepository> _blogPostRepositoryMock = new ();
 
-    private readonly BlogPost _existingBlogPost = new ("this-post-already-exists");
+    private readonly BlogPost _existingBlogPost = BlogPost.Create("this-post-already-exists").Value;
 
     public RegisterBlogPostCommandHandlerTests()
     {

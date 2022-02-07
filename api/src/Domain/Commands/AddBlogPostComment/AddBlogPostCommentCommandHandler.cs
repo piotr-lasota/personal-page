@@ -31,18 +31,27 @@ public class AddBlogPostCommentCommandHandler : ICommandHandler<AddBlogPostComme
             return Result.Fail(new ResourceNotFoundError());
         }
 
-        var comment = new BlogPostComment(
+        var commentCreationResult = BlogPostComment.Create(
             command.Author,
             command.Text,
             DateTimeOffset.Now);
 
-        post.AddComment(comment);
+        if (commentCreationResult.IsFailed)
+        {
+            return new Result().WithErrors(commentCreationResult.Errors);
+        }
+
+        var addingCommentResult = post.AddComment(commentCreationResult.Value);
+        if (addingCommentResult.IsFailed)
+        {
+            return new Result().WithErrors(commentCreationResult.Errors);
+        }
 
         await _blogPostRepository.SaveAsync(post, cancellationToken);
 
         _logger.LogInformation(
             "Successfully added comment by {Author} to {Slug}",
-            comment.User,
+            commentCreationResult.Value.User,
             post.Slug);
 
         return Result.Ok();

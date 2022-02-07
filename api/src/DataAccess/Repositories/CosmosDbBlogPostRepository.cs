@@ -1,3 +1,4 @@
+using System.Net;
 using DataAccess.Repositories.JsonDtos;
 using Domain.Models;
 using Domain.Repositories;
@@ -141,11 +142,24 @@ public class CosmosDbBlogPostRepository : IBlogPostRepository
                     new PartitionKey(slug),
                     cancellationToken: cancellationToken);
 
-            return new BlogPost(response.Resource.Slug);
+            var blogPostMaterializationResult = BlogPost.Create(response.Resource.Slug);
+
+            if (blogPostMaterializationResult.IsSuccess)
+            {
+                return blogPostMaterializationResult.Value;
+            }
+
+            _logger.LogError(
+                "Failed to materialize post {Slug} from {Dto} due to {Errors}",
+                slug,
+                response.Resource,
+                blogPostMaterializationResult.Errors);
+
+            throw new ApplicationException($"Failed to materialize post {slug}");
         }
         catch (CosmosException cosmosException)
         {
-            if (cosmosException.StatusCode == System.Net.HttpStatusCode.NotFound)
+            if (cosmosException.StatusCode == HttpStatusCode.NotFound)
             {
                 return null;
             }
@@ -192,7 +206,7 @@ public class CosmosDbBlogPostRepository : IBlogPostRepository
         }
         catch (CosmosException cosmosException)
         {
-            if (cosmosException.StatusCode == System.Net.HttpStatusCode.NotFound)
+            if (cosmosException.StatusCode == HttpStatusCode.NotFound)
             {
                 return new List<BlogPostComment>();
             }
@@ -205,13 +219,31 @@ public class CosmosDbBlogPostRepository : IBlogPostRepository
             throw;
         }
 
-        return blogPostComments
-           .Select(blogPostCommentDto =>
-                       new BlogPostComment(
-                           blogPostCommentDto.Id,
-                           blogPostCommentDto.User,
-                           blogPostCommentDto.Text,
-                           blogPostCommentDto.PublishedAt))
+        var commentDtoMaterializationResults = blogPostComments
+           .Select(blogPostCommentDto => BlogPostComment.Create(
+                       blogPostCommentDto.Id,
+                       blogPostCommentDto.User,
+                       blogPostCommentDto.Text,
+                       blogPostCommentDto.PublishedAt))
            .ToList();
+
+        var materializationErrors = commentDtoMaterializationResults
+           .Where(result => result.IsFailed)
+           .SelectMany(result => result.Errors)
+           .ToList();
+
+        if (materializationErrors.Count == 0)
+        {
+            return commentDtoMaterializationResults
+               .Select(result => result.Value)
+               .ToList();
+        }
+
+        _logger.LogError(
+            "Failed to materialize comments on post {Slug} due to {Errors}",
+            materializationErrors,
+            slug);
+
+        throw new ApplicationException($"Failed to materialize comments on post {slug}");
     }
 }

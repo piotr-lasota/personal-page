@@ -18,7 +18,7 @@ public class AddBlogPostCommentCommandHandlerTests
 
     private readonly Mock<IBlogPostRepository> _blogPostRepositoryMock = new ();
 
-    private readonly BlogPost _existingBlogPost = new ("slug");
+    private readonly BlogPost _existingBlogPost = BlogPost.Create("slug").Value;
 
     public AddBlogPostCommentCommandHandlerTests()
     {
@@ -75,7 +75,10 @@ public class AddBlogPostCommentCommandHandlerTests
 
         // Assert
         result.IsSuccess.Should().BeFalse();
-        result.Errors.Should().HaveCount(1);
-        result.Errors.Single().Should().BeOfType<ResourceNotFoundError>();
+        result.Errors.Should()
+           .HaveCount(1)
+           .And.Subject.Single()
+           .Should()
+           .BeOfType<ResourceNotFoundError>();
     }
 }

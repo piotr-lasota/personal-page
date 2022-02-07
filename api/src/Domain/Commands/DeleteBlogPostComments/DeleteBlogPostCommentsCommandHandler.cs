@@ -48,9 +48,13 @@ public class DeleteBlogPostCommentsCommandHandler : ICommandHandler<DeleteBlogPo
             return Result.Fail(new ResourceNotFoundError());
         }
 
-        foreach (var commentToDelete in commentsToDelete)
+        var commentsRemovalErrors = commentsToDelete
+           .SelectMany(commentToDelete => post.RemoveComment(commentToDelete).Errors)
+           .ToList();
+
+        if (commentsRemovalErrors.Count > 0)
         {
-            post.RemoveComment(commentToDelete);
+            return new Result().WithErrors(commentsRemovalErrors);
         }
 
         await _blogPostRepository.SaveAsync(post, cancellationToken);

@@ -17,11 +17,12 @@ public class BlogPostCommentTests
         var commentText = new string(Enumerable.Repeat('a', commentLength).ToArray());
 
         // Act
-        var attemptToConstructCommentWithInvalidTextLength =
-            () => new BlogPostComment("User", commentText, DateTimeOffset.Now);
+        var invalidTextLengthCommentCreationResult =
+            BlogPostComment.Create("User", commentText, DateTimeOffset.Now);
 
         // Assert
-        attemptToConstructCommentWithInvalidTextLength.Should().Throw<ArgumentException>();
+        invalidTextLengthCommentCreationResult.IsFailed.Should().BeTrue();
+        invalidTextLengthCommentCreationResult.Errors.Should().NotBeEmpty();
     }
 
     [Theory]
@@ -33,10 +34,11 @@ public class BlogPostCommentTests
         var user = new string(Enumerable.Repeat('a', commentLength).ToArray());
 
         // Act
-        var attemptToConstructCommentWithInvalidUserLength =
-            () => new BlogPostComment(user, "Some valid comment", DateTimeOffset.Now);
+        var invalidUserLengthCommentCreationResult =
+            BlogPostComment.Create(user, "Some valid comment", DateTimeOffset.Now);
 
         // Assert
-        attemptToConstructCommentWithInvalidUserLength.Should().Throw<ArgumentException>();
+        invalidUserLengthCommentCreationResult.IsFailed.Should().BeTrue();
+        invalidUserLengthCommentCreationResult.Errors.Should().NotBeEmpty();
     }
 }

@@ -57,7 +57,6 @@ public class AddBlogPost
                     : HttpStatusCode.Created);
         }
 
-        _logger.LogError("Handler failed with unexpected {Errors}", result.Errors);
         return req.CreateResponse(HttpStatusCode.UnprocessableEntity);
     }
 }

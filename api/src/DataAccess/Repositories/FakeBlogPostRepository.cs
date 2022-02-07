@@ -17,18 +17,21 @@ public class FakeBlogPostRepository : IBlogPostRepository
     {
         _logger = logger;
 
-        var fakeBlogPost = new BlogPost(
-            "getting-contentful-to-work");
+        var fakeBlogPost = BlogPost.Create(
+                "getting-contentful-to-work")
+           .Value;
 
-        fakeBlogPost.AddComment(new BlogPostComment(
-            "johnDoe123",
-            "OMG Great post, so much true!",
-            DateTimeOffset.Now.AddDays(-1)));
+        fakeBlogPost.AddComment(BlogPostComment.Create(
+                "johnDoe123",
+                "OMG Great post, so much true!",
+                DateTimeOffset.Now.AddDays(-1))
+           .Value);
 
-        fakeBlogPost.AddComment(new BlogPostComment(
-            "Bill Gates",
-            "Dude, so much inspiration! Come join M$!",
-            DateTimeOffset.Now.AddDays(-2).AddHours(4)));
+        fakeBlogPost.AddComment(BlogPostComment.Create(
+                "Bill Gates",
+                "Dude, so much inspiration! Come join M$!",
+                DateTimeOffset.Now.AddDays(-2).AddHours(4))
+           .Value);
 
         _blogPosts.AddOrUpdate(
             fakeBlogPost.Slug,

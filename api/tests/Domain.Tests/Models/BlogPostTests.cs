@@ -8,7 +8,7 @@ namespace Domain.Tests.Models;
 
 public class BlogPostTests
 {
-    private readonly BlogPost _subject = new BlogPost("test-subject-blog-post");
+    private readonly BlogPost _subject = BlogPost.Create("test-subject-blog-post").Value;
 
     [Fact]
     public void NewBlogPostHasNoComments()
@@ -17,7 +17,7 @@ public class BlogPostTests
         var slug = "this-is-a-slug";
 
         // Act
-        var blogPost = new BlogPost(slug);
+        var blogPost = BlogPost.Create(slug).Value;
 
         // Assert
         blogPost.Slug.Should().Be(slug);
@@ -31,10 +31,10 @@ public class BlogPostTests
     public void BlogPostAcceptsSlugsInCorrectFormat(string slug)
     {
         // Act
-        var creatingBlogPostWithCorrectSlug = () => new BlogPost(slug);
+        var createPostWithCorrectSlug = BlogPost.Create(slug);
 
         // Assert
-        creatingBlogPostWithCorrectSlug.Should().NotThrow();
+        createPostWithCorrectSlug.IsSuccess.Should().BeTrue();
     }
 
     [Theory]
@@ -47,25 +47,28 @@ public class BlogPostTests
     public void BlogPostThrowsIfSlugIsNotInCorrectFormat(string slug)
     {
         // Act
-        var creatingBlogPostWithIncorrectSlug = () => new BlogPost(slug);
+        var createPostWithIncorrectSlug = BlogPost.Create(slug);
 
         // Assert
-        creatingBlogPostWithIncorrectSlug.Should().Throw<ArgumentException>();
+        createPostWithIncorrectSlug.IsFailed.Should().BeTrue();
+        createPostWithIncorrectSlug.Errors.Should().NotBeEmpty();
     }
 
     [Fact]
     public void AddCommentAddsAComment()
     {
         // Arrange
-        var commentToAdd = new BlogPostComment(
-            "Jane Dean",
-            "Keep me here",
-            DateTimeOffset.Now.AddDays(-2));
+        var commentToAdd = BlogPostComment.Create(
+                "Jane Dean",
+                "Keep me here",
+                DateTimeOffset.Now.AddDays(-2))
+           .Value;
 
         // Act
-        _subject.AddComment(commentToAdd);
+        var additionResult = _subject.AddComment(commentToAdd);
 
         // Assert
+        additionResult.IsSuccess.Should().BeTrue();
         _subject.Comments.Should().HaveCount(1);
         _subject.Comments.Should().Contain(commentToAdd);
     }
@@ -74,45 +77,88 @@ public class BlogPostTests
     public void RemoveCommentRemovesComment()
     {
         // Arrange
-        var commentToKeep = new BlogPostComment(
-            "Jane Dean",
-            "Keep me here",
-            DateTimeOffset.Now.AddDays(-2));
-        var commentToDelete = new BlogPostComment(
-            "John Doe",
-            "Delete me, please",
-            DateTimeOffset.Now.AddDays(-1));
+        var commentToKeep = BlogPostComment.Create(
+                "Jane Dean",
+                "Keep me here",
+                DateTimeOffset.Now.AddDays(-2))
+           .Value;
+
+        var commentToDelete = BlogPostComment.Create(
+                "John Doe",
+                "Delete me, please",
+                DateTimeOffset.Now.AddDays(-1))
+           .Value;
 
         _subject.AddComment(commentToKeep);
         _subject.AddComment(commentToDelete);
 
         // Act
-        _subject.RemoveComment(commentToDelete);
+        var removalResult = _subject.RemoveComment(commentToDelete);
 
         // Assert
+        removalResult.IsSuccess.Should().BeTrue();
         _subject.Comments.Should().HaveCount(1);
         _subject.Comments.Should().NotContain(commentToDelete);
         _subject.Comments.Should().Contain(commentToKeep);
     }
 
     [Fact]
+    public void RemoveCommentFailsToRemoveCommentNotOnPost()
+    {
+        // Arrange
+        var existingComment = BlogPostComment.Create(
+                "Jane Dean",
+                "Keep me here",
+                DateTimeOffset.Now.AddDays(-2))
+           .Value;
+
+        var commentToDeleteThatIsNotOnPost = BlogPostComment.Create(
+                "John Doe",
+                "Delete me, please",
+                DateTimeOffset.Now.AddDays(-1))
+           .Value;
+
+        _subject.AddComment(existingComment);
+
+        // Act
+        var removalResult = _subject.RemoveComment(commentToDeleteThatIsNotOnPost);
+
+        // Assert
+        removalResult.IsFailed.Should().BeTrue();
+        removalResult.Errors.Should()
+           .HaveCount(1)
+           .And.Subject.Single()
+           .Metadata.Should()
+           .ContainKey("commentId")
+           .WhoseValue.Should()
+           .Be(commentToDeleteThatIsNotOnPost.Id);
+
+        _subject.Comments.Should().HaveCount(1);
+        _subject.Comments.Should().NotContain(commentToDeleteThatIsNotOnPost);
+        _subject.Comments.Should().Contain(existingComment);
+    }
+
+    [Fact]
     public void CommentsAreReturnedChronologically()
     {
         // Arrange & Act
-        var earlierComment = new BlogPostComment(
-            "Jane Dean",
-            "I was first",
-            DateTimeOffset.Now.AddDays(-5));
+        var earlierComment = BlogPostComment.Create(
+                "Jane Dean",
+                "I was first",
+                DateTimeOffset.Now.AddDays(-5))
+           .Value;
 
-        var middleComment = new BlogPostComment(
-            "Mia Walker",
-            "I was in the middle",
-            DateTimeOffset.Now.AddDays(-3));
+        var middleComment = BlogPostComment.Create(
+                "Mia Walker",
+                "I was in the middle",
+                DateTimeOffset.Now.AddDays(-3))
+           .Value;
 
-        var latestComment = new BlogPostComment(
-            "John Doe",
-            "I was the last one",
-            DateTimeOffset.Now.AddDays(-1));
+        var latestComment = BlogPostComment.Create(
+                "John Doe",
+                "I was the last one",
+                DateTimeOffset.Now.AddDays(-1))
+           .Value;
 
         _subject.AddComment(middleComment);
         _subject.AddComment(latestComment);

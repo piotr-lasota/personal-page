@@ -1,4 +1,6 @@
 using System.Text.RegularExpressions;
+using Domain.Errors;
+using FluentResults;
 
 namespace Domain.Models;
 
@@ -9,26 +11,8 @@ public class BlogPost
 
     private readonly List<BlogPostComment> _comments = new ();
 
-    public BlogPost(string slug)
+    private BlogPost(string slug)
     {
-        if (string.IsNullOrWhiteSpace(slug))
-        {
-            throw new ArgumentException("Slug is mandatory");
-        }
-
-        if (slug.Length > SlutLengthRange.max ||
-            slug.Length < SlutLengthRange.min)
-        {
-            throw new ArgumentException(
-                $"Slug must be between {SlutLengthRange.min} and {SlutLengthRange.max} characters");
-        }
-
-        if (!SlugRegex.IsMatch(slug))
-        {
-            throw new ArgumentException(
-                "Slugs must have a proper sluggish format");
-        }
-
         Slug = slug;
     }
 
@@ -41,7 +25,48 @@ public class BlogPost
            .ToList()
            .AsReadOnly();
 
-    public void AddComment(BlogPostComment comment) => _comments.Add(comment);
+    public static Result<BlogPost> Create(string slug)
+    {
+        var errors = new List<IError>();
+        if (string.IsNullOrWhiteSpace(slug))
+        {
+            errors.Add(
+                new DomainRuleViolationError(
+                    "Slug is mandatory"));
+        }
 
-    public void RemoveComment(BlogPostComment commentToDelete) => _comments.Remove(commentToDelete);
+        if (slug.Length > SlutLengthRange.max ||
+            slug.Length < SlutLengthRange.min)
+        {
+            errors.Add(
+                new DomainRuleViolationError(
+                    $"Slug must be between {SlutLengthRange.min} and {SlutLengthRange.max} characters"));
+        }
+
+        if (!SlugRegex.IsMatch(slug))
+        {
+            errors.Add(
+                new DomainRuleViolationError(
+                    "Slugs must have a proper sluggish format"));
+        }
+
+        return errors.Count > 0
+            ? new Result<BlogPost>().WithErrors(errors)
+            : Result.Ok(new BlogPost(slug));
+    }
+
+    public Result AddComment(BlogPostComment comment)
+    {
+        _comments.Add(comment);
+        return Result.Ok();
+    }
+
+    public Result RemoveComment(BlogPostComment commentToDelete)
+    {
+        return _comments.Remove(commentToDelete)
+            ? Result.Ok()
+            : Result.Fail(
+                new Error("Failed to remove comment")
+                   .WithMetadata("commentId", commentToDelete.Id));
+    }
 }

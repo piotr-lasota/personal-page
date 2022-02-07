@@ -20,7 +20,7 @@ public class DeleteBlogPostCommentsCommandHandlerTests
 
     private readonly Mock<IBlogPostRepository> _blogPostRepositoryMock = new ();
 
-    private readonly BlogPost _existingBlogPost = new ("slug");
+    private readonly BlogPost _existingBlogPost = BlogPost.Create("slug").Value;
 
     public DeleteBlogPostCommentsCommandHandlerTests()
     {
@@ -41,20 +41,23 @@ public class DeleteBlogPostCommentsCommandHandlerTests
     {
         // Arrange
         var firstCommentToBeDeleted =
-            new BlogPostComment(
-                "John",
-                "I don't like this post",
-                DateTimeOffset.Now.AddDays(-1));
+            BlogPostComment.Create(
+                    "John",
+                    "I don't like this post",
+                    DateTimeOffset.Now.AddDays(-1))
+               .Value;
 
-        var secondCommentToBeDeleted = new BlogPostComment(
-            "Misha",
-            "I don't like the author",
-            DateTimeOffset.Now.AddDays(-2));
+        var secondCommentToBeDeleted = BlogPostComment.Create(
+                "Misha",
+                "I don't like the author",
+                DateTimeOffset.Now.AddDays(-2))
+           .Value;
 
-        var commentToKeep = new BlogPostComment(
-            "Misha",
-            "OMG everything is awesome",
-            DateTimeOffset.Now.AddDays(-3));
+        var commentToKeep = BlogPostComment.Create(
+                "Misha",
+                "OMG everything is awesome",
+                DateTimeOffset.Now.AddDays(-3))
+           .Value;
 
         _existingBlogPost.AddComment(firstCommentToBeDeleted);
         _existingBlogPost.AddComment(secondCommentToBeDeleted);
@@ -102,8 +105,9 @@ public class DeleteBlogPostCommentsCommandHandlerTests
         // Assert
         result.IsSuccess.Should().BeFalse();
 
-        result.Errors.Should().HaveCount(1);
-        result.Errors.Single()
+        result.Errors.Should()
+           .HaveCount(1)
+           .And.Subject.Single()
            .Should()
            .BeOfType<ResourceNotFoundError>();
     }
@@ -112,11 +116,11 @@ public class DeleteBlogPostCommentsCommandHandlerTests
     public async Task ReturnsNotFoundErrorWhenAnyCommentDoesNotExist()
     {
         // Arrange
-        var existingComment =
-            new BlogPostComment(
+        var existingComment = BlogPostComment.Create(
                 "John",
                 "I don't like this post",
-                DateTimeOffset.Now.AddDays(-1));
+                DateTimeOffset.Now.AddDays(-1))
+           .Value;
 
         var nonExistingCommentId = Guid.NewGuid();
 
@@ -134,8 +138,9 @@ public class DeleteBlogPostCommentsCommandHandlerTests
         // Assert
         result.IsSuccess.Should().BeFalse();
 
-        result.Errors.Should().HaveCount(1);
-        result.Errors.Single()
+        result.Errors.Should()
+           .HaveCount(1)
+           .And.Subject.Single()
            .Should()
            .BeOfType<ResourceNotFoundError>();
     }

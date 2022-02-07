@@ -37,9 +37,13 @@ public class RegisterBlogPostCommandHandler : ICommandHandler<RegisterBlogPostCo
             return Result.Ok().WithSuccess<AlreadyExisted>();
         }
 
-        var newBlogPost = new BlogPost(command.Slug);
+        var blogPostCreationResult = BlogPost.Create(command.Slug);
+        if (blogPostCreationResult.IsFailed)
+        {
+            return new Result().WithErrors(blogPostCreationResult.Errors);
+        }
 
-        await _blogPostRepository.SaveAsync(newBlogPost, cancellationToken);
+        await _blogPostRepository.SaveAsync(blogPostCreationResult.Value, cancellationToken);
 
         _logger.LogInformation(
             "Successfully registered post {Slug}",

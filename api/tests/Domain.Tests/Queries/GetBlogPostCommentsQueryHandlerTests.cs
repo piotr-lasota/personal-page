@@ -18,15 +18,17 @@ public class GetBlogPostCommentsQueryHandlerTests
     private readonly GetBlogPostCommentsQueryHandler _subject;
 
     private readonly Mock<IBlogPostRepository> _blogPostRepositoryMock = new ();
-    private readonly BlogPost _existingBlogPost = new ("slug");
+    private readonly BlogPost _existingBlogPost = BlogPost.Create("slug").Value;
 
     public GetBlogPostCommentsQueryHandlerTests()
     {
-        _existingBlogPost.AddComment(
-            new BlogPostComment(
+        var existingComment = BlogPostComment.Create(
                 "John Doe",
                 "A comment",
-                DateTimeOffset.Now));
+                DateTimeOffset.Now)
+           .Value;
+
+        _existingBlogPost.AddComment(existingComment);
 
         _blogPostRepositoryMock
            .Setup(blogPostRepository => blogPostRepository
@@ -65,7 +67,10 @@ public class GetBlogPostCommentsQueryHandlerTests
 
         // Assert
         queryResult.IsSuccess.Should().BeFalse();
-        queryResult.Errors.Should().HaveCount(1);
-        queryResult.Errors.Single().Should().BeOfType<ResourceNotFoundError>();
+        queryResult.Errors.Should()
+           .HaveCount(1)
+           .And.Subject.Single()
+           .Should()
+           .BeOfType<ResourceNotFoundError>();
     }
 }

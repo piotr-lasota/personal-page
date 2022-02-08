@@ -11,6 +11,18 @@ dotenv.config({
   path: envFilesPath
 });
 
+const gatsbySourceContentfulOptions =
+  process.env.CONTENTFUL_IS_PREVIEW === 'true'
+    ? {
+        spaceId: process.env.CONTENTFUL_SPACE_ID,
+        accessToken: process.env.CONTENTFUL_PREVIEW_API_KEY,
+        host: 'preview.contentful.com'
+      }
+    : {
+        spaceId: process.env.CONTENTFUL_SPACE_ID,
+        accessToken: process.env.CONTENTFUL_DELIVERY_API_KEY
+      };
+
 module.exports = {
   siteMetadata: {
     title: 'Piotr Lasota',
@@ -23,10 +35,10 @@ module.exports = {
         name: 'Home',
         link: ''
       },
-      // {
-      //   name: 'Bio',
-      //   link: 'bio'
-      // },
+      {
+        name: 'Bio',
+        link: 'bio'
+      },
       {
         name: 'Blog',
         link: 'blog'
@@ -81,10 +93,7 @@ module.exports = {
     },
     {
       resolve: 'gatsby-source-contentful',
-      options: {
-        spaceId: process.env.CONTENTFUL_SPACE_ID,
-        accessToken: process.env.CONTENTFUL_DELIVERY_API_KEY
-      }
+      options: gatsbySourceContentfulOptions
     }
   ]
 };

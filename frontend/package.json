@@ -74,7 +74,7 @@
   "license": "0BSD",
   "scripts": {
     "build": "gatsby build",
-    "develop-gatsby": "gatsby develop",
+    "develop-gatsby": "yarn clean && gatsby develop",
     "develop-swa": "swa start http://localhost:8000/ --api-location http://localhost:7071/",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
     "start": "gatsby develop",

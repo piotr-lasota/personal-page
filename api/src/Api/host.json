@@ -1,11 +1,22 @@
 {
-    "version": "2.0",
-    "logging": {
-        "applicationInsights": {
-            "samplingSettings": {
-                "isEnabled": true,
-                "excludedTypes": "Request"
-            }
-        }
+  "version": "2.0",
+  "logging": {
+    "applicationInsights": {
+      "samplingSettings": {
+        "isEnabled": true,
+        "excludedTypes": "Request"
+      }
+    },
+    "logLevel": {
+      "Function": "Warning",
+      "Function.AddBlogPostComment": "Warning",
+      "Function.AddBlogPostComment.User": "Information",
+      "Function.DeleteBlogPostComments": "Warning",
+      "Function.DeleteBlogPostComments.User": "Information",
+      "Function.GetBlogPostComments": "Warning",
+      "Function.GetBlogPostComments.User": "Information",
+      "Function.AddBlogPost": "Warning",
+      "Function.AddBlogComment.User": "Information"
     }
+  }
 }

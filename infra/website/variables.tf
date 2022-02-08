@@ -34,3 +34,15 @@ variable "txt_validation_token" {
   nullable    = true
   default     = null
 }
+
+variable "app_insights_instrumentation_key" {
+  description = "Azure Application Insights instrumentation key"
+  type        = string
+  nullable    = false
+}
+
+variable "app_insights_resource_id" {
+  description = "Azure Application Insights resource id"
+  type        = string
+  nullable    = false
+}

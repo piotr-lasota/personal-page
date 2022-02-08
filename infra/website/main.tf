@@ -4,6 +4,11 @@ resource "azurerm_static_site" "website" {
   location            = var.location
   sku_size            = "Free"
   sku_tier            = "Free"
+
+  tags = {
+    "hidden-link: /app-insights-resource-id"        = var.app_insights_resource_id
+    "hidden-link: /app-insights-instrmentation-key" = var.app_insights_instrumentation_key
+  }
 }
 
 module "custom_name" {

@@ -7,7 +7,7 @@
       ]
     },
     {
-      "route": "/blog/*/comments",
+      "route": "/blog/management/*",
       "allowedRoles": [
         "owner"
       ]

@@ -1,6 +1,12 @@
 /* eslint-disable import/prefer-default-export */
-import ContentfulBlogPost from './ContentfulBlogPost';
 import BlogPostRegistration from './BlogPostRegistration';
+import BlogPostsList from './BlogPostsList';
 import CommentsManagementSection from './CommentsManagementSection';
+import ContentfulBlogPost from './ContentfulBlogPost';
 
-export { ContentfulBlogPost, BlogPostRegistration, CommentsManagementSection };
+export {
+  BlogPostRegistration,
+  BlogPostsList,
+  CommentsManagementSection,
+  ContentfulBlogPost
+};

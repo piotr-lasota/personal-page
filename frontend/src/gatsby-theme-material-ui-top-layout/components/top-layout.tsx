@@ -5,7 +5,10 @@ import ThemeTopLayout from 'gatsby-theme-material-ui-top-layout/src/components/t
 import { Box, Container, Theme } from '@mui/material';
 
 import { graphql, useStaticQuery } from 'gatsby';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import { NavigationBar } from '../../components';
+
+const queryClient = new QueryClient();
 
 type QueryData = {
   site: {
@@ -44,13 +47,15 @@ const TopLayout = ({ children, theme }: TopLayoutProps): JSX.Element => {
   );
 
   return (
-    <ThemeTopLayout theme={theme}>
-      <Container maxWidth="md">
-        <NavigationBar pages={pages} />
-        <Box sx={{ mb: 2 }} />
-        {children}
-      </Container>
-    </ThemeTopLayout>
+    <QueryClientProvider client={queryClient}>
+      <ThemeTopLayout theme={theme}>
+        <Container maxWidth="md">
+          <NavigationBar pages={pages} />
+          <Box sx={{ mb: 2 }} />
+          {children}
+        </Container>
+      </ThemeTopLayout>
+    </QueryClientProvider>
   );
 };
 

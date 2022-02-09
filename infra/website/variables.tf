@@ -35,14 +35,11 @@ variable "txt_validation_token" {
   default     = null
 }
 
-variable "app_insights_instrumentation_key" {
-  description = "Azure Application Insights instrumentation key"
-  type        = string
+variable "azurerm_static_site_app_insights_tags" {
+  description = "Azure Application Insights secret tags"
   nullable    = false
-}
-
-variable "app_insights_resource_id" {
-  description = "Azure Application Insights resource id"
-  type        = string
-  nullable    = false
+  type = object({
+    instrumentation_key : string,
+    app_insights_resource_id : string
+  })
 }

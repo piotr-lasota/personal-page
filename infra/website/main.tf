@@ -6,8 +6,16 @@ resource "azurerm_static_site" "website" {
   sku_tier            = "Free"
 
   tags = {
-    "hidden-link: /app-insights-resource-id"        = var.app_insights_resource_id
-    "hidden-link: /app-insights-instrmentation-key" = var.app_insights_instrumentation_key
+    "hidden-link: /app-insights-resource-id"        = var.azurerm_static_site_app_insights_tags.app_insights_resource_id
+    #                              ↓ Azure really does this "instrmentation" vs "instrUmentation" typo
+    "hidden-link: /app-insights-instrmentation-key" = var.azurerm_static_site_app_insights_tags.instrumentation_key
+  }
+
+  lifecycle {
+    ignore_changes = [
+      tags["hidden-link: /app-insights-resource-id"],
+      tags["hidden-link: /app-insights-instrmentation-key"]
+    ]
   }
 }
 

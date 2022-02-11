@@ -15,7 +15,9 @@ const BiographyHeaderCell = ({
     sx={{
       display: 'flex',
       flexDirection: 'column',
-      justifyContent: 'center'
+      justifyContent: 'center',
+      mb: 1,
+      px: 2
     }}
   >
     {children}

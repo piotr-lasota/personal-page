@@ -1,11 +1,12 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { useQuery } from 'react-query';
-import { Alert, Box, Snackbar } from '@mui/material';
+import { Box } from '@mui/material';
 import api from '../../api';
 import ToggleableCommentsList from './ToggleableCommentsList';
 import DeleteCommentsConfirmationDialog from './DeleteCommentsConfirmationDialog';
 import { PublishedComment } from '../../models';
-import { ToastDurationInMilliseconds } from '../../../../constants';
+import { useConfirmableActionWithResultNotification } from '../../../../hooks';
+import { Toast } from '../../../../components';
 
 export type CommentsManagerProps = {
   slug: string;
@@ -15,16 +16,6 @@ const CommentsManagerContainer = ({
   slug,
   title
 }: CommentsManagerProps): JSX.Element => {
-  const [showDeleteConfirmationDialog, setShowDeleteConfirmationDialog] =
-    useState(false);
-
-  const [showCommentsDeletedSnackbar, setShowCommentsDeletedSnackbar] =
-    useState(false);
-  const [
-    showDeletingCommentsFailedSnackbar,
-    setShowDeletingCommentsFailedSnackbar
-  ] = useState(false);
-
   const [commentsToDelete, setCommentsToDelete] = useState<PublishedComment[]>(
     []
   );
@@ -41,36 +32,21 @@ const CommentsManagerContainer = ({
     [commentsQuery.data]
   );
 
+  const deleteSelectedComments = useCallback<() => Promise<void>>(async () => {
+    await api.deleteCommentsInPost(slug, commentsToDelete);
+  }, [commentsToDelete, slug]);
+
+  const [show, handle] = useConfirmableActionWithResultNotification({
+    actionToConfirm: deleteSelectedComments,
+    onSuccess: commentsQuery.refetch,
+    onFailed: commentsQuery.refetch
+  });
+
   const handleDeleteCommentsClicked = (
-    commentsMarkedForDeletion: PublishedComment[]
+    selectedComments: PublishedComment[]
   ) => {
-    setCommentsToDelete(commentsMarkedForDeletion);
-    setShowDeleteConfirmationDialog(true);
-  };
-
-  const handleCommentsDeletionConfirmationClicked = async (): Promise<void> => {
-    setShowDeleteConfirmationDialog(false);
-    try {
-      await api.deleteCommentsInPost(slug, commentsToDelete);
-    } catch {
-      setShowDeletingCommentsFailedSnackbar(true);
-    } finally {
-      await commentsQuery.refetch();
-    }
-
-    setShowCommentsDeletedSnackbar(true);
-  };
-
-  const handleCommentsDeletionCancellationClicked = () => {
-    setShowDeleteConfirmationDialog(false);
-  };
-
-  const handleCommentsDeletedSnackbarClosed = () => {
-    setShowCommentsDeletedSnackbar(false);
-  };
-
-  const handleDeletingCommentsFailedSnackbarClosed = () => {
-    setShowDeletingCommentsFailedSnackbar(false);
+    setCommentsToDelete(selectedComments);
+    handle.confirmationRequested();
   };
 
   return (
@@ -81,38 +57,26 @@ const CommentsManagerContainer = ({
         comments={comments}
         onDeleteCommentsClicked={handleDeleteCommentsClicked}
       />
+
       <DeleteCommentsConfirmationDialog
-        isOpen={showDeleteConfirmationDialog}
-        onConfirmed={handleCommentsDeletionConfirmationClicked}
-        onCancelled={handleCommentsDeletionCancellationClicked}
+        isOpen={show.confirmationPrompt}
+        onConfirmed={handle.confirmed}
+        onCancelled={handle.cancelled}
       />
 
-      <Snackbar
-        open={showCommentsDeletedSnackbar}
-        autoHideDuration={ToastDurationInMilliseconds}
-        onClose={handleCommentsDeletedSnackbarClosed}
-      >
-        <Alert
-          onClose={handleCommentsDeletedSnackbarClosed}
-          severity="success"
-          variant="filled"
-        >
-          Comments deleted
-        </Alert>
-      </Snackbar>
-      <Snackbar
-        open={showDeletingCommentsFailedSnackbar}
-        autoHideDuration={ToastDurationInMilliseconds}
-        onClose={handleDeletingCommentsFailedSnackbarClosed}
-      >
-        <Alert
-          onClose={handleDeletingCommentsFailedSnackbarClosed}
-          severity="error"
-          variant="filled"
-        >
-          Failed trying to delete some of the comments
-        </Alert>
-      </Snackbar>
+      <Toast
+        open={show.successNotification}
+        message="Comments deleted"
+        severity="success"
+        onDismissed={handle.successDismissed}
+      />
+
+      <Toast
+        open={show.failureNotification}
+        message="Failed trying to delete some of the comments"
+        severity="error"
+        onDismissed={handle.failureDismissed}
+      />
     </Box>
   );
 };

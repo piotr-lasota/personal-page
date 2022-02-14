@@ -6,7 +6,7 @@ namespace Domain.Models;
 
 public class BlogPost
 {
-    private static readonly (int min, int max) SlutLengthRange = (3, 100);
+    private static readonly (int min, int max) SlugLengthRange = (3, 100);
     private static readonly Regex SlugRegex = new ("^([a-z0-9-]+)$", RegexOptions.Compiled);
 
     private readonly List<BlogPostComment> _comments = new ();
@@ -35,12 +35,12 @@ public class BlogPost
                     "Slug is mandatory"));
         }
 
-        if (slug.Length > SlutLengthRange.max ||
-            slug.Length < SlutLengthRange.min)
+        if (slug.Length > SlugLengthRange.max ||
+            slug.Length < SlugLengthRange.min)
         {
             errors.Add(
                 new DomainRuleViolationError(
-                    $"Slug must be between {SlutLengthRange.min} and {SlutLengthRange.max} characters"));
+                    $"Slug must be between {SlugLengthRange.min} and {SlugLengthRange.max} characters"));
         }
 
         if (!SlugRegex.IsMatch(slug))

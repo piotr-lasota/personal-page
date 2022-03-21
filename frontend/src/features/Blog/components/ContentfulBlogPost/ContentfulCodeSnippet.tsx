@@ -3,7 +3,7 @@ import SyntaxHighlighter from 'react-syntax-highlighter';
 import { github } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 
 type ContentfulCodeSnippetProps = {
-  language: 'javascript' | 'c#';
+  language: string | undefined;
   children: ReactNode;
 };
 const ContentfulCodeSnippet = ({

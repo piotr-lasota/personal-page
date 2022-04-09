@@ -6,7 +6,7 @@ on:
     types: [ contentful-content-changed ]
 
 env:
-  GATSBY_ENABLE_FEATURE_COMMENTS_SECTION: true
+  GATSBY_ENABLE_FEATURE_COMMENTS_SECTION: false
 
 jobs:
   api:

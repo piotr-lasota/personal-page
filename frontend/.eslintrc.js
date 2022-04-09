@@ -61,6 +61,8 @@ module.exports = {
         avoidEscape: true
       }
     ],
+    'react/prop-types': 'off',
+    'react/require-default-props': 'off',
     'react-hooks/exhaustive-deps': 'error',
     'react-hooks/rules-of-hooks': 'error',
     'react/jsx-filename-extension': 'off'

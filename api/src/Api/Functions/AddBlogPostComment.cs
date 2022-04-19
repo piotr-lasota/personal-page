@@ -1,7 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 using System.Net;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
+using Api.Authorization;
 using Api.Extensions;
 using Domain.Commands.AddBlogPostComment;
 using Domain.Errors;
@@ -33,6 +35,17 @@ public class AddBlogPostComment
     {
         var cancellationTokenSource = new CancellationTokenSource();
         var token = cancellationTokenSource.Token;
+
+        var claimsPrincipal = req.ParseClaimsPrincipal();
+
+        if (!claimsPrincipal.HasClaim(ClaimTypes.Role, ApplicationRoles.Authenticated))
+        {
+            _logger.LogUnauthorizedActivityAttempt(
+                claimsPrincipal,
+                "Attempt to register post {Slug}",
+                slug);
+            return req.CreateResponse(HttpStatusCode.Unauthorized);
+        }
 
         var (ok, addBlogPostRequest) = await req.Body
            .TryDeserializingToValidTypeAsync<AddBlogPostCommentRequestBody>(token);

@@ -1,10 +1,8 @@
 namespace DataAccess.Repositories.JsonDtos;
 
-public record BlogPostCommentJsonDto
+internal record BlogPostCommentJsonDto
 {
     public const string BlogPostCollectionTypeValue = "blogPostComment";
-
-    public string Type => BlogPostCollectionTypeValue;
 
     public Guid Id { get; set; }
 

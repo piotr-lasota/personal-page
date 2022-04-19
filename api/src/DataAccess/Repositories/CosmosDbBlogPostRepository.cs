@@ -34,7 +34,7 @@ public class CosmosDbBlogPostRepository : IBlogPostRepository
 
     public async Task<BlogPost?> GetBySlugAsync(
         string slug,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken = default)
     {
         var blogPost = await GetBlogPostAsync(slug, cancellationToken);
 
@@ -54,7 +54,7 @@ public class CosmosDbBlogPostRepository : IBlogPostRepository
 
     public async Task SaveAsync(
         BlogPost blogPost,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken = default)
     {
         // Quick, dirty and expensive solution for the initial release
         var existingBlogPost = await GetBySlugAsync(blogPost.Slug, cancellationToken);

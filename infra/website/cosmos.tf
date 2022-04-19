@@ -54,3 +54,13 @@ resource "azurerm_cosmosdb_sql_container" "blogPost" {
   database_name       = azurerm_cosmosdb_sql_database.blog[each.key].name
   partition_key_path  = "/slug"
 }
+
+resource "azurerm_cosmosdb_sql_container" "users" {
+  for_each = local.databases
+
+  name                = "users"
+  resource_group_name = var.resource_group_name
+  account_name        = azurerm_cosmosdb_account.cosmos.name
+  database_name       = azurerm_cosmosdb_sql_database.blog[each.key].name
+  partition_key_path  = "/userId"
+}

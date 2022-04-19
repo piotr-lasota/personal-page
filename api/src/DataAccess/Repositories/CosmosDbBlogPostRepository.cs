@@ -64,7 +64,7 @@ public class CosmosDbBlogPostRepository : IBlogPostRepository
 
         if (existingBlogPost is null)
         {
-            transactionalBatch.CreateItem(ToJsonDto(blogPost));
+            transactionalBatch.CreateItem(blogPost.ToJsonDto());
         }
 
         var existingCommentIds = existingBlogPost?.Comments
@@ -77,12 +77,12 @@ public class CosmosDbBlogPostRepository : IBlogPostRepository
 
         var commentsToAdd = blogPost.Comments
            .Where(comment => !existingCommentIds.Contains(comment.Id))
-           .Select(comment => ToJsonDto(blogPost, comment))
+           .Select(comment => comment.ToJsonDto(blogPost))
            .ToList();
 
         var commentsToDelete = existingBlogPost?.Comments
            .Where(comment => !desiredCommentIds.Contains(comment.Id))
-           .Select(comment => ToJsonDto(blogPost, comment))
+           .Select(comment => comment.ToJsonDto(blogPost))
            .ToList() ?? new List<BlogPostCommentJsonDto>();
 
         foreach (var commentToAdd in commentsToAdd)
@@ -107,27 +107,6 @@ public class CosmosDbBlogPostRepository : IBlogPostRepository
             blogPost.Slug);
 
         throw new ApplicationException($"Failed saving post {blogPost.Slug}");
-    }
-
-    private static BlogPostJsonDto ToJsonDto(BlogPost blogPost)
-    {
-        return new BlogPostJsonDto
-        {
-            Slug = blogPost.Slug,
-        };
-    }
-
-    private static BlogPostCommentJsonDto ToJsonDto(BlogPost blogPost, BlogPostComment comment)
-    {
-        return new BlogPostCommentJsonDto
-        {
-            Slug = blogPost.Slug,
-            Id = comment.Id,
-
-            PublishedAt = comment.PublishedAt,
-            Text = comment.Text,
-            User = comment.User,
-        };
     }
 
     private async Task<BlogPost?> GetBlogPostAsync(

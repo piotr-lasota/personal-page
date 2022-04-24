@@ -2,6 +2,8 @@ name: Build and publish the application
 
 on:
   push:
+    branches:
+      - trunk
   repository_dispatch:
     types: [ contentful-content-changed ]
 
